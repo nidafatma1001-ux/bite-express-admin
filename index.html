@@ -1,1 +1,154 @@
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BITE EXPRESS Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f4f4;color:#171717;font-family:Arial,sans-serif}
+header{background:#111;color:#ffd21a;padding:18px;font-size:22px;font-weight:bold}
+main{max-width:750px;margin:auto;padding:15px}
+.card,.order{background:white;padding:18px;border-radius:14px;margin:14px 0;box-shadow:0 3px 12px #0001}
+input,select{width:100%;padding:13px;margin:8px 0;border:1px solid #ddd;border-radius:9px;font-size:16px}
+button{background:#ffd21a;color:#111;border:0;padding:13px;border-radius:9px;font-weight:bold;font-size:15px}
+.primary{width:100%;margin-top:10px}
+.order h3{color:#ad7900}
+.order p{overflow-wrap:anywhere;line-height:1.5}
+.small{color:#666;font-size:13px}
+.hidden{display:none}
+#message{color:#c22;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<header>🍔 BITE EXPRESS — ADMIN</header>
+<main>
+<section id="loginSection" class="card">
+<h2>Admin Login</h2>
+<p class="small">केवल अधिकृत Admin के लिए</p>
+<form id="loginForm">
+<input id="email" type="email" placeholder="Admin Email" required>
+<input id="password" type="password" placeholder="Password" required>
+<button class="primary" type="submit">LOGIN</button>
+</form>
+<p id="message"></p>
+</section>
+<section id="dashboard" class="hidden">
+<div class="card">
+<h2>Admin Dashboard</h2>
+<p>कुल ऑर्डर: <b id="orderCount">0</b></p>
+<button id="logoutBtn">Logout</button>
+</div>
+<div id="orders"></div>
+</section>
+</main>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import {getFirestore,collection,query,orderBy,onSnapshot,doc,updateDoc} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyDpbsl25aI8JiQokGfJpBdTzAL7U_egQTc",
+authDomain:"bite-express-f7d75.firebaseapp.com",
+projectId:"bite-express-f7d75",
+storageBucket:"bite-express-f7d75.firebasestorage.app",
+messagingSenderId:"163486652098",
+appId:"1:163486652098:web:9a509f6dd8d7d05bad0d5b",
+measurementId:"G-ZY8M6S8NHB"
+};
+const ADMIN_UID="pGKsautDrQYi7nNDUzbgmYHN8c92";
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const loginSection=document.getElementById("loginSection");
+const dashboard=document.getElementById("dashboard");
+const message=document.getElementById("message");
+const ordersBox=document.getElementById("orders");
+let unsubscribe=null;
+
+document.getElementById("loginForm").addEventListener("submit",async e=>{
+e.preventDefault();
+message.textContent="लॉगिन हो रहा है...";
+try{
+const result=await signInWithEmailAndPassword(auth,document.getElementById("email").value.trim(),document.getElementById("password").value);
+if(result.user.uid!==ADMIN_UID){
+await signOut(auth);
+message.textContent="यह अधिकृत Admin अकाउंट नहीं है।";
+}
+}catch(error){message.textContent="लॉगिन नहीं हुआ: "+error.message;}
+});
+
+onAuthStateChanged(auth,user=>{
+if(user&&user.uid===ADMIN_UID){
+loginSection.classList.add("hidden");
+dashboard.classList.remove("hidden");
+loadOrders();
+}else{
+stopOrders();
+loginSection.classList.remove("hidden");
+dashboard.classList.add("hidden");
+}
+});
+
+function stopOrders(){
+if(unsubscribe){unsubscribe();unsubscribe=null;}
+}
+function addText(parent,label,value){
+const p=document.createElement("p");
+p.textContent=label+": "+value;
+parent.appendChild(p);
+}
+function loadOrders(){
+stopOrders();
+ordersBox.textContent="ऑर्डर लोड हो रहे हैं...";
+const q=query(collection(db,"orders"),orderBy("createdAt","desc"));
+unsubscribe=onSnapshot(q,snapshot=>{
+document.getElementById("orderCount").textContent=snapshot.size;
+ordersBox.replaceChildren();
+if(snapshot.empty){ordersBox.textContent="अभी कोई ऑर्डर नहीं है।";return;}
+snapshot.forEach(item=>{
+const o=item.data();
+const card=document.createElement("div");
+card.className="order";
+const title=document.createElement("h3");
+title.textContent="Order: "+(o.id||item.id);
+card.appendChild(title);
+addText(card,"नाम",o.name||"");
+addText(card,"मोबाइल",o.phone||"");
+addText(card,"पता",o.address||"");
+addText(card,"कुल रकम","₹"+(o.total||0));
+addText(card,"मौजूदा स्टेटस",o.status||"New");
+const itemLine=document.createElement("p");
+itemLine.textContent="सामान: "+(o.items||[]).map(x=>(x.name||"खाना")+" × "+(x.quantity||1)).join(", ");
+card.appendChild(itemLine);
+const select=document.createElement("select");
+["New","Accepted","Preparing","Out for delivery","Delivered","Cancelled"].forEach(status=>{
+const option=document.createElement("option");
+option.value=status;
+option.textContent=status;
+if((o.status||"New")===status)option.selected=true;
+select.appendChild(option);
+});
+card.appendChild(select);
+const button=document.createElement("button");
+button.className="primary";
+button.textContent="स्टेटस अपडेट करें";
+button.addEventListener("click",async()=>{
+button.disabled=true;
+try{
+await updateDoc(doc(db,"orders",item.id),{status:select.value});
+alert("ऑर्डर स्टेटस अपडेट हो गया।");
+}catch(error){alert("अपडेट नहीं हुआ: "+error.message);}
+finally{button.disabled=false;}
+});
+card.appendChild(button);
+ordersBox.appendChild(card);
+});
+},error=>{ordersBox.textContent="ऑर्डर लोड नहीं हुए: "+error.message;});
+}
+document.getElementById("logoutBtn").addEventListener("click",()=>signOut(auth));
+</script>
+</body>
+</html>
+
