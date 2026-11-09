@@ -1,309 +1,145 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111827">
-  <title>BITE EXPRESS Admin</title>
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;background:#f3f4f6;color:#111827;font-family:Arial,sans-serif}
-    header{background:#111827;color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-    header h1{font-size:20px;margin:0} header small{color:#d1d5db}
-    main{max-width:900px;margin:22px auto;padding:0 14px}
-    .panel{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 12px #0000000d;margin-bottom:16px}
-    .login{max-width:420px;margin:55px auto}
-    h2{font-size:20px;margin:0 0 14px}
-    label{display:block;font-size:14px;font-weight:700;margin:12px 0 6px}
-    input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:9px;font-size:16px;background:#fff}
-    button{border:0;border-radius:9px;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;background:#f97316;color:#fff}
-    button:disabled{opacity:.6;cursor:wait}
-    .full{width:100%;margin-top:16px}
-    .secondary{background:#374151;padding:9px 12px}
-    .error{display:none;background:#fef2f2;color:#991b1b;border:1px solid #fecaca;border-radius:9px;padding:11px;margin-top:13px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
-    .success{display:none;background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;border-radius:9px;padding:11px;margin-top:13px;font-size:14px}
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-    .stat{background:#fff;border-radius:12px;padding:15px;box-shadow:0 2px 12px #00000008}
-    .stat b{display:block;font-size:24px;margin-top:5px}
-    .order{background:#fff;border-radius:12px;padding:16px;margin:12px 0;box-shadow:0 2px 12px #00000008}
-    .order-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #e5e7eb;padding-bottom:10px;margin-bottom:10px}
-    .order-id{font-weight:700}.muted{color:#6b7280;font-size:13px}
-    .order p{margin:7px 0;line-height:1.45;overflow-wrap:anywhere}
-    .items{background:#f9fafb;padding:10px;border-radius:8px;margin:10px 0;font-size:14px;line-height:1.6}
-    .status-row{display:flex;gap:8px;align-items:center;margin-top:12px}
-    .status-row select{flex:1;min-width:0}
-    .empty{text-align:center;color:#6b7280;padding:28px 10px}
-    #dashboard{display:none}
-    @media(max-width:480px){.stats{grid-template-columns:1fr 1fr}.status-row{align-items:stretch;flex-direction:column}.status-row button{width:100%}header h1{font-size:18px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111827">
+<title>BITE EXPRESS Admin</title>
+<style>
+:root{--ink:#111827;--yellow:#facc15;--bg:#f4f4f5;--muted:#6b7280}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
+header{background:var(--ink);color:white;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}.mark{width:42px;height:42px;border-radius:12px;background:var(--yellow);color:#111;display:grid;place-items:center;font-weight:900;font-size:20px}
+h1{font-size:19px;margin:0}header small{color:#d1d5db}
+main{max-width:950px;margin:20px auto;padding:0 14px 35px}
+.panel,.stat,.order{background:#fff;border-radius:14px;padding:17px;box-shadow:0 3px 14px #0000000a}
+.login{max-width:430px;margin:48px auto}
+h2{font-size:19px;margin:0 0 14px}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:9px;font-size:16px;background:white}
+button{border:0;border-radius:9px;padding:12px 15px;font-size:14px;font-weight:700;background:var(--yellow);color:#111;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}.dark{background:#374151;color:white}.full{width:100%;margin-top:16px}
+.error,.notice{display:none;border-radius:9px;padding:11px;margin-top:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.notice{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+#dashboard{display:none}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{font-size:13px;color:var(--muted)}.stat b{display:block;font-size:25px;color:var(--ink);margin-top:5px}
+.order{margin:12px 0}.orderhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #eee;padding-bottom:10px}
+.muted{color:var(--muted);font-size:13px}.items{white-space:pre-line;background:#f9fafb;padding:10px;border-radius:8px;line-height:1.6;font-size:14px;margin:10px 0}
+.order p{margin:8px 0;overflow-wrap:anywhere}.statusrow{display:flex;gap:8px;margin-top:12px}.statusrow select{flex:1;min-width:0}
+.empty{text-align:center;color:var(--muted);padding:25px 8px}
+@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.statusrow{flex-direction:column}.statusrow button{width:100%}}
+</style>
 </head>
 <body>
-  <header>
-    <div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div>
-    <button id="logoutBtn" class="secondary" style="display:none">Logout</button>
-  </header>
+<header>
+  <div class="brand"><div class="mark">B</div><div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div></div>
+  <button id="logoutBtn" class="dark" style="display:none">Logout</button>
+</header>
+<main>
+  <section id="loginPanel" class="panel login">
+    <h2>Admin Login</h2>
+    <form id="loginForm">
+      <label for="email">Email</label><input id="email" type="email" autocomplete="username" placeholder="Admin email" required>
+      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
+      <button id="loginBtn" class="full" type="submit">LOGIN</button>
+    </form>
+    <div id="loginError" class="error" role="alert"></div>
+    <div class="notice" id="keyNotice">Firebase API Key स्वीकार नहीं हुई। Firebase Console की Web App config से apiKey दोबारा जाँचें।</div>
+  </section>
+  <section id="dashboard">
+    <div class="toolbar"><div><h2 style="margin:0">Orders</h2><div class="muted">ग्राहकों के नए ऑर्डर यहाँ दिखेंगे।</div></div><button id="refreshBtn" class="dark">Refresh</button></div>
+    <div class="stats">
+      <div class="stat">Total Orders<b id="totalCount">0</b></div>
+      <div class="stat">New Orders<b id="newCount">0</b></div>
+      <div class="stat">Delivered<b id="deliveredCount">0</b></div>
+    </div>
+    <div id="ordersError" class="error"></div>
+    <div id="ordersList"><div class="panel empty">ऑर्डर लोड हो रहे हैं...</div></div>
+  </section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
-  <main>
-    <section id="loginPanel" class="panel login">
-      <h2>Admin Login</h2>
-      <form id="loginForm">
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="username" placeholder="Admin email" required>
-        <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
-        <button id="loginBtn" class="full" type="submit">LOGIN</button>
-      </form>
-      <div id="loginError" class="error" role="alert"></div>
-    </section>
-
-    <section id="dashboard">
-      <div class="stats">
-        <div class="stat">Total Orders<b id="totalCount">0</b></div>
-        <div class="stat">New Orders<b id="newCount">0</b></div>
-        <div class="stat">Delivered<b id="deliveredCount">0</b></div>
-      </div>
-      <div class="panel">
-        <h2 style="margin-bottom:4px">Orders</h2>
-        <div class="muted">नए ऑर्डर यहाँ दिखाई देंगे।</div>
-        <div id="ordersMessage" class="error"></div>
-        <div id="ordersList"><div class="empty">ऑर्डर लोड हो रहे हैं...</div></div>
-      </div>
-    </section>
-  </main>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
-
-    // BITE EXPRESS Firebase settings
-    const firebaseConfig = {
-      apiKey: "AIzaSyDpbsl25aI8JiQokGfJpBdTzAL7U_egQTc",
-      authDomain: "bite-express-f7d75.firebaseapp.com",
-      projectId: "bite-express-f7d75",
-      storageBucket: "bite-express-f7d75.firebasestorage.app",
-      messagingSenderId: "163486652098",
-      appId: "1:163486652098:web:9a509f6dd8d7d05bad0d5b",
-      measurementId: "G-ZY8M6S8NHB"
-    };
-
-    const ADMIN_UID = "pGKsautDrQYi7nNDUzbgmYHN8c92";
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const loginPanel = document.getElementById("loginPanel");
-    const dashboard = document.getElementById("dashboard");
-    const loginForm = document.getElementById("loginForm");
-    const loginBtn = document.getElementById("loginBtn");
-    const loginError = document.getElementById("loginError");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const ordersList = document.getElementById("ordersList");
-    const ordersMessage = document.getElementById("ordersMessage");
-    let stopOrdersListener = null;
-    let lastLoginError = "";
-
-    function showLoginError(message) {
-      loginError.textContent = message;
-      loginError.style.display = "block";
-    }
-    function hideLoginError() {
-      loginError.textContent = "";
-      loginError.style.display = "none";
-    }
-    function showOrdersError(message) {
-      ordersMessage.textContent = message;
-      ordersMessage.style.display = "block";
-    }
-    function clearOrdersError() {
-      ordersMessage.textContent = "";
-      ordersMessage.style.display = "none";
-    }
-    function showLogin() {
-      loginPanel.style.display = "block";
-      dashboard.style.display = "none";
-      logoutBtn.style.display = "none";
-    }
-    function showDashboard() {
-      loginPanel.style.display = "none";
-      dashboard.style.display = "block";
-      logoutBtn.style.display = "inline-block";
-    }
-    function explainAuthError(error) {
-      const code = error && error.code ? error.code : "";
-      if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") return "Email या Password सही नहीं है। Firebase Authentication में उसी Admin ईमेल से जाँचें।";
-      if (code === "auth/invalid-email") return "Email का पता सही फॉर्मेट में नहीं है।";
-      if (code === "auth/too-many-requests") return "बहुत बार कोशिश हुई है। कुछ देर बाद फिर कोशिश करें।";
-      if (code === "auth/unauthorized-domain") return "यह वेबसाइट Firebase में Authorized domains में जोड़नी होगी: nidafatma1001-ux.github.io";
-      if (code === "auth/api-key-not-valid") return "Firebase API Key स्वीकार नहीं हुई। Firebase की Web App config जाँचनी होगी।";
-      return "Login में समस्या आई: " + (code || (error && error.message) || "Unknown error");
-    }
-
-    loginForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      hideLoginError();
-      lastLoginError = "";
-      loginBtn.disabled = true;
-      loginBtn.textContent = "PLEASE WAIT...";
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (error) {
-        lastLoginError = explainAuthError(error);
-        showLoginError(lastLoginError);
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = "LOGIN";
-      }
-    });
-
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        if (stopOrdersListener) stopOrdersListener();
-        stopOrdersListener = null;
-        await signOut(auth);
-        showLogin();
-      } catch (error) {
-        alert("Logout में समस्या: " + (error.message || error));
-      }
-    });
-
-    function displayValue(value) {
-      if (value === undefined || value === null || value === "") return "—";
-      return String(value);
-    }
-    function formatDate(value) {
-      try {
-        if (!value) return "";
-        const date = value.toDate ? value.toDate() : new Date(value);
-        if (Number.isNaN(date.getTime())) return "";
-        return date.toLocaleString("en-IN");
-      } catch (_) { return ""; }
-    }
-    function renderOrders(snapshot) {
-      const orders = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
-      orders.sort((a,b) => {
-        const da = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0;
-        const dbb = b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0;
-        return dbb - da;
-      });
-      document.getElementById("totalCount").textContent = orders.length;
-      document.getElementById("newCount").textContent = orders.filter(o => (o.status || "New") === "New").length;
-      document.getElementById("deliveredCount").textContent = orders.filter(o => o.status === "Delivered").length;
-      ordersList.replaceChildren();
-      if (!orders.length) {
-        const empty = document.createElement("div");
-        empty.className = "empty";
-        empty.textContent = "अभी कोई ऑर्डर नहीं है।";
-        ordersList.appendChild(empty);
-        return;
-      }
-      for (const order of orders) {
-        const card = document.createElement("article");
-        card.className = "order";
-        const top = document.createElement("div");
-        top.className = "order-top";
-        const id = document.createElement("div");
-        id.className = "order-id";
-        id.textContent = "Order #" + order.id;
-        const date = document.createElement("div");
-        date.className = "muted";
-        date.textContent = formatDate(order.createdAt);
-        top.append(id, date);
-        card.appendChild(top);
-
-        const customerName = order.name || order.customerName || order.customer_name || order.userName || "Customer";
-        const phone = order.phone || order.mobile || order.customerPhone || "—";
-        const customer = document.createElement("p");
-        customer.textContent = "Customer: " + displayValue(customerName) + " | Phone: " + displayValue(phone);
-        card.appendChild(customer);
-
-        const itemsBox = document.createElement("div");
-        itemsBox.className = "items";
-        const items = Array.isArray(order.items) ? order.items : [];
-        if (items.length) {
-          itemsBox.textContent = items.map(item => {
-            if (typeof item === "string") return item;
-            const name = item.name || item.title || item.productName || "Item";
-            const qty = item.qty || item.quantity || 1;
-            const price = item.price !== undefined ? " (₹" + item.price + ")" : "";
-            return name + " × " + qty + price;
-          }).join("\n");
-          itemsBox.style.whiteSpace = "pre-line";
-        } else {
-          itemsBox.textContent = "Items की जानकारी उपलब्ध नहीं है।";
-        }
-        card.appendChild(itemsBox);
-
-        const total = document.createElement("p");
-        total.innerHTML = "<strong>Total: ₹</strong>";
-        const totalValue = document.createElement("strong");
-        totalValue.textContent = displayValue(order.total || order.grandTotal || order.amount || 0);
-        total.appendChild(totalValue);
-        card.appendChild(total);
-
-        const statusRow = document.createElement("div");
-        statusRow.className = "status-row";
-        const select = document.createElement("select");
-        const statuses = ["New", "Accepted", "Preparing", "Out for Delivery", "Delivered", "Cancelled"];
-        const currentStatus = order.status || "New";
-        if (!statuses.includes(currentStatus)) statuses.unshift(currentStatus);
-        statuses.forEach(status => {
-          const option = document.createElement("option");
-          option.value = status;
-          option.textContent = status;
-          option.selected = status === currentStatus;
-          select.appendChild(option);
-        });
-        const updateButton = document.createElement("button");
-        updateButton.type = "button";
-        updateButton.textContent = "Update Status";
-        updateButton.addEventListener("click", async () => {
-          updateButton.disabled = true;
-          updateButton.textContent = "Saving...";
-          try {
-            await updateDoc(doc(db, "orders", order.id), { status: select.value });
-            updateButton.textContent = "Saved";
-            setTimeout(() => { updateButton.textContent = "Update Status"; updateButton.disabled = false; }, 1000);
-          } catch (error) {
-            updateButton.disabled = false;
-            updateButton.textContent = "Update Status";
-            showOrdersError("Status अपडेट नहीं हुआ: " + (error.code || error.message || error));
-          }
-        });
-        statusRow.append(select, updateButton);
-        card.appendChild(statusRow);
-        ordersList.appendChild(card);
-      }
-    }
-
-    function startOrders() {
-      if (stopOrdersListener) stopOrdersListener();
-      clearOrdersError();
-      ordersList.innerHTML = '<div class="empty">ऑर्डर लोड हो रहे हैं...</div>';
-      stopOrdersListener = onSnapshot(collection(db, "orders"), renderOrders, (error) => {
-        showOrdersError("ऑर्डर पढ़ने में समस्या: " + (error.code || error.message || error));
-        ordersList.innerHTML = '<div class="empty">ऑर्डर लोड नहीं हो पाए। ऊपर दिया संदेश देखें।</div>';
-      });
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        showLogin();
-        if (lastLoginError) showLoginError(lastLoginError);
-        return;
-      }
-      if (user.uid !== ADMIN_UID) {
-        showLogin();
-        showLoginError("इस Email से Login हुआ है, लेकिन यह Admin UID नहीं है। Firebase में Admin UID और कोड की UID मिलाएँ।");
-        signOut(auth).catch(() => {});
-        return;
-      }
-      hideLoginError();
-      showDashboard();
-      startOrders();
-    });
-  </script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDpbsl25aI8jiQokGfJpBdTzAL7U_egQTc",
+  authDomain: "bite-express-f7d75.firebaseapp.com",
+  projectId: "bite-express-f7d75",
+  storageBucket: "bite-express-f7d75.firebasestorage.app",
+  messagingSenderId: "163486652098",
+  appId: "1:163486652098:web:9a509f6dd8d7d05bad0d5b",
+  measurementId: "G-ZY8M6S8NHB"
+};
+const ADMIN_UID = "pGKsautDrQYi7nNDUzbgmYHN8c92";
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+const $=id=>document.getElementById(id);
+let unsubscribe=null, lastError="";
+function errorText(e){
+ const c=e?.code||"";
+ const map={
+ "auth/api-key-not-valid":"Firebase API Key अमान्य है। Firebase Console से नई/सही Web API Key जाँचनी होगी।",
+ "auth/invalid-credential":"Email या Password सही नहीं है।",
+ "auth/unauthorized-domain":"GitHub Pages domain Firebase Authentication के Authorized domains में जोड़ें।",
+ "auth/too-many-requests":"बहुत बार कोशिश हुई है। कुछ देर बाद फिर कोशिश करें।",
+ "permission-denied":"Firestore Rules में Admin UID को orders पढ़ने/बदलने की अनुमति नहीं है।"
+ };
+ return map[c]||("समस्या: "+(c||e?.message||"Unknown error"));
+}
+function showError(id,msg){$(id).textContent=msg;$(id).style.display="block"}
+function hideError(id){$(id).textContent="";$(id).style.display="none"}
+function loginView(){ $("loginPanel").style.display="block";$("dashboard").style.display="none";$("logoutBtn").style.display="none"}
+function dashboardView(){ $("loginPanel").style.display="none";$("dashboard").style.display="block";$("logoutBtn").style.display="inline-block"}
+$("loginForm").addEventListener("submit",async ev=>{
+ ev.preventDefault();hideError("loginError");$("keyNotice").style.display="none";
+ $("loginBtn").disabled=true;$("loginBtn").textContent="PLEASE WAIT...";
+ try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
+ catch(e){lastError=errorText(e);showError("loginError",lastError);if(e?.code==="auth/api-key-not-valid")$("keyNotice").style.display="block"}
+ finally{$("loginBtn").disabled=false;$("loginBtn").textContent="LOGIN"}
+});
+$("logoutBtn").addEventListener("click",async()=>{
+ if(unsubscribe){unsubscribe();unsubscribe=null}
+ await signOut(auth);loginView()
+});
+function dateText(v){try{const d=v?.toDate?v.toDate():new Date(v);return isNaN(d)? "":d.toLocaleString("en-IN")}catch{return ""}}
+function render(snapshot){
+ const orders=snapshot.docs.map(x=>({id:x.id,...x.data()}));
+ orders.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+ $("totalCount").textContent=orders.length;
+ $("newCount").textContent=orders.filter(o=>(o.status||"New")==="New").length;
+ $("deliveredCount").textContent=orders.filter(o=>o.status==="Delivered").length;
+ const root=$("ordersList");root.replaceChildren();
+ if(!orders.length){root.innerHTML='<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';return}
+ for(const o of orders){
+  const card=document.createElement("article");card.className="order";
+  const head=document.createElement("div");head.className="orderhead";
+  const oid=document.createElement("strong");oid.textContent="Order #"+o.id;
+  const dt=document.createElement("span");dt.className="muted";dt.textContent=dateText(o.createdAt);head.append(oid,dt);card.append(head);
+  const p=document.createElement("p");p.textContent="Customer: "+(o.name||o.customerName||o.customer_name||"Customer")+" | Phone: "+(o.phone||o.mobile||o.customerPhone||"—");card.append(p);
+  const itemBox=document.createElement("div");itemBox.className="items";
+  itemBox.textContent=Array.isArray(o.items)&&o.items.length?o.items.map(i=>typeof i==="string"?i:((i.name||i.title||"Item")+" × "+(i.qty||i.quantity||1)+(i.price!==undefined?" (₹"+i.price+")":""))).join("\n"):"Items की जानकारी उपलब्ध नहीं है।";card.append(itemBox);
+  const total=document.createElement("p");total.textContent="Total: ₹"+(o.total??o.grandTotal??o.amount??0);card.append(total);
+  const row=document.createElement("div");row.className="statusrow";
+  const sel=document.createElement("select");const states=["New","Accepted","Preparing","Out for Delivery","Delivered","Cancelled"];const current=o.status||"New";
+  if(!states.includes(current))states.unshift(current);
+  states.forEach(s=>{const op=document.createElement("option");op.value=s;op.textContent=s;op.selected=s===current;sel.append(op)});
+  const btn=document.createElement("button");btn.textContent="Update Status";
+  btn.addEventListener("click",async()=>{btn.disabled=true;btn.textContent="Saving...";try{await updateDoc(doc(db,"orders",o.id),{status:sel.value});btn.textContent="Saved";setTimeout(()=>{btn.disabled=false;btn.textContent="Update Status"},900)}catch(e){btn.disabled=false;btn.textContent="Update Status";showError("ordersError",errorText(e))}});
+  row.append(sel,btn);card.append(row);root.append(card);
+ }
+}
+function startOrders(){
+ if(unsubscribe)unsubscribe();hideError("ordersError");$("ordersList").innerHTML='<div class="panel empty">ऑर्डर लोड हो रहे हैं...</div>';
+ unsubscribe=onSnapshot(collection(db,"orders"),render,e=>showError("ordersError",errorText(e)));
+}
+$("refreshBtn").addEventListener("click",startOrders);
+onAuthStateChanged(auth,user=>{
+ if(!user){loginView();if(lastError)showError("loginError",lastError);return}
+ if(user.uid!==ADMIN_UID){loginView();showError("loginError","यह Email Admin UID से मेल नहीं खाता।");signOut(auth).catch(()=>{});return}
+ hideError("loginError");dashboardView();startOrders();
+});
+</script>
 </body>
 </html>
