@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -10,8 +11,10 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
 header{background:var(--ink);color:white;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.brand{display:flex;align-items:center;gap:10px}.mark{width:42px;height:42px;border-radius:12px;background:var(--yellow);color:#111;display:grid;place-items:center;font-weight:900;font-size:20px}
-h1{font-size:19px;margin:0}header small{color:#d1d5db}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:42px;height:42px;border-radius:12px;background:var(--yellow);color:#111;display:grid;place-items:center;font-weight:900;font-size:20px}
+h1{font-size:19px;margin:0}
+header small{color:#d1d5db}
 main{max-width:950px;margin:20px auto;padding:0 14px 35px}
 .panel,.stat,.order{background:#fff;border-radius:14px;padding:17px;box-shadow:0 3px 14px #0000000a}
 .login{max-width:430px;margin:48px auto}
@@ -19,50 +22,93 @@ h2{font-size:19px;margin:0 0 14px}
 label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
 input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:9px;font-size:16px;background:white}
 button{border:0;border-radius:9px;padding:12px 15px;font-size:14px;font-weight:700;background:var(--yellow);color:#111;cursor:pointer}
-button:disabled{opacity:.55;cursor:wait}.dark{background:#374151;color:white}.full{width:100%;margin-top:16px}
+button:disabled{opacity:.55;cursor:wait}
+.dark{background:#374151;color:white}
+.full{width:100%;margin-top:16px}
 .error,.notice{display:none;border-radius:9px;padding:11px;margin-top:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
-.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}.notice{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
-#dashboard{display:none}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.notice{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+#dashboard{display:none}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.stat{font-size:13px;color:var(--muted)}.stat b{display:block;font-size:25px;color:var(--ink);margin-top:5px}
-.order{margin:12px 0}.orderhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #eee;padding-bottom:10px}
-.muted{color:var(--muted);font-size:13px}.items{white-space:pre-line;background:#f9fafb;padding:10px;border-radius:8px;line-height:1.6;font-size:14px;margin:10px 0}
-.order p{margin:8px 0;overflow-wrap:anywhere}.statusrow{display:flex;gap:8px;margin-top:12px}.statusrow select{flex:1;min-width:0}
+.stat{font-size:13px;color:var(--muted)}
+.stat b{display:block;font-size:25px;color:var(--ink);margin-top:5px}
+.order{margin:12px 0}
+.orderhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #eee;padding-bottom:10px}
+.muted{color:var(--muted);font-size:13px}
+.items{white-space:pre-line;background:#f9fafb;padding:10px;border-radius:8px;line-height:1.6;font-size:14px;margin:10px 0}
+.order p{margin:8px 0;overflow-wrap:anywhere}
+.statusrow{display:flex;gap:8px;margin-top:12px}
+.statusrow select{flex:1;min-width:0}
 .empty{text-align:center;color:var(--muted);padding:25px 8px}
-@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.statusrow{flex-direction:column}.statusrow button{width:100%}}
+@media(max-width:520px){
+.stats{grid-template-columns:1fr 1fr}
+.statusrow{flex-direction:column}
+.statusrow button{width:100%}
+}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="brand"><div class="mark">B</div><div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div></div>
+  <div class="brand">
+    <div class="mark">B</div>
+    <div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div>
+  </div>
   <button id="logoutBtn" class="dark" style="display:none">Logout</button>
 </header>
+
 <main>
   <section id="loginPanel" class="panel login">
     <h2>Admin Login</h2>
     <form id="loginForm">
-      <label for="email">Email</label><input id="email" type="email" autocomplete="username" placeholder="Admin email" required>
-      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" placeholder="Admin email" required>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
       <button id="loginBtn" class="full" type="submit">LOGIN</button>
     </form>
     <div id="loginError" class="error" role="alert"></div>
-    <div class="notice" id="keyNotice">Firebase API Key स्वीकार नहीं हुई। Firebase Console की Web App config से apiKey दोबारा जाँचें।</div>
+    <div class="notice" id="keyNotice">Firebase API Key स्वीकार नहीं हुई। Firebase Console की Web App config से apiKey जाँचें।</div>
   </section>
+
   <section id="dashboard">
-    <div class="toolbar"><div><h2 style="margin:0">Orders</h2><div class="muted">ग्राहकों के नए ऑर्डर यहाँ दिखेंगे।</div></div><button id="refreshBtn" class="dark">Refresh</button></div>
+    <div class="toolbar">
+      <div>
+        <h2 style="margin:0">Orders</h2>
+        <div class="muted">ग्राहकों के नए ऑर्डर यहाँ दिखेंगे।</div>
+      </div>
+      <button id="refreshBtn" class="dark">Refresh</button>
+    </div>
+
     <div class="stats">
       <div class="stat">Total Orders<b id="totalCount">0</b></div>
       <div class="stat">New Orders<b id="newCount">0</b></div>
       <div class="stat">Delivered<b id="deliveredCount">0</b></div>
     </div>
+
     <div id="ordersError" class="error"></div>
     <div id="ordersList"><div class="panel empty">ऑर्डर लोड हो रहे हैं...</div></div>
   </section>
 </main>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDAY0UCPHBSetl8D1VJiQ3NqrTVNVzt8hU",
@@ -73,72 +119,282 @@ const firebaseConfig = {
   appId: "1:163486652098:web:9a509f6dd8d7d05bad0d5b",
   measurementId: "G-ZY8M6S8NHB"
 };
+
 const ADMIN_UID = "pGKsautDrQYi7nNDUzbgmYHN8c92";
-const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-const $=id=>document.getElementById(id);
-let unsubscribe=null, lastError="";
-function errorText(e){
- const c=e?.code||"";
- const map={
- "auth/api-key-not-valid":"Firebase API Key अमान्य है। Firebase Console से नई/सही Web API Key जाँचनी होगी।",
- "auth/invalid-credential":"Email या Password सही नहीं है।",
- "auth/unauthorized-domain":"GitHub Pages domain Firebase Authentication के Authorized domains में जोड़ें।",
- "auth/too-many-requests":"बहुत बार कोशिश हुई है। कुछ देर बाद फिर कोशिश करें।",
- "permission-denied":"Firestore Rules में Admin UID को orders पढ़ने/बदलने की अनुमति नहीं है।"
- };
- return map[c]||("समस्या: "+(c||e?.message||"Unknown error"));
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const $ = id => document.getElementById(id);
+
+let unsubscribe = null;
+let lastError = "";
+
+function showError(id, msg) {
+  $(id).textContent = msg;
+  $(id).style.display = "block";
 }
-function showError(id,msg){$(id).textContent=msg;$(id).style.display="block"}
-function hideError(id){$(id).textContent="";$(id).style.display="none"}
-function loginView(){ $("loginPanel").style.display="block";$("dashboard").style.display="none";$("logoutBtn").style.display="none"}
-function dashboardView(){ $("loginPanel").style.display="none";$("dashboard").style.display="block";$("logoutBtn").style.display="inline-block"}
-$("loginForm").addEventListener("submit",async ev=>{
- ev.preventDefault();hideError("loginError");$("keyNotice").style.display="none";
- $("loginBtn").disabled=true;$("loginBtn").textContent="PLEASE WAIT...";
- try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}
- catch(e){lastError=errorText(e);showError("loginError",lastError);if(e?.code==="auth/api-key-not-valid")$("keyNotice").style.display="block"}
- finally{$("loginBtn").disabled=false;$("loginBtn").textContent="LOGIN"}
+
+function hideError(id) {
+  $(id).textContent = "";
+  $(id).style.display = "none";
+}
+
+function errorText(e) {
+  return "Firebase Error Code: " +
+    (e?.code || "unknown") +
+    "\nMessage: " +
+    (e?.message || "Unknown error");
+}
+
+function loginView() {
+  $("loginPanel").style.display = "block";
+  $("dashboard").style.display = "none";
+  $("logoutBtn").style.display = "none";
+}
+
+function dashboardView() {
+  $("loginPanel").style.display = "none";
+  $("dashboard").style.display = "block";
+  $("logoutBtn").style.display = "inline-block";
+}
+
+$("loginForm").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  hideError("loginError");
+  $("keyNotice").style.display = "none";
+
+  $("loginBtn").disabled = true;
+  $("loginBtn").textContent = "PLEASE WAIT...";
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      $("email").value.trim(),
+      $("password").value
+    );
+  } catch (e) {
+    lastError = errorText(e);
+    showError("loginError", lastError);
+
+    if (e?.code === "auth/api-key-not-valid") {
+      $("keyNotice").style.display = "block";
+    }
+  } finally {
+    $("loginBtn").disabled = false;
+    $("loginBtn").textContent = "LOGIN";
+  }
 });
-$("logoutBtn").addEventListener("click",async()=>{
- if(unsubscribe){unsubscribe();unsubscribe=null}
- await signOut(auth);loginView()
+
+$("logoutBtn").addEventListener("click", async () => {
+  if (unsubscribe) {
+    unsubscribe();
+    unsubscribe = null;
+  }
+  await signOut(auth);
+  loginView();
 });
-function dateText(v){try{const d=v?.toDate?v.toDate():new Date(v);return isNaN(d)? "":d.toLocaleString("en-IN")}catch{return ""}}
-function render(snapshot){
- const orders=snapshot.docs.map(x=>({id:x.id,...x.data()}));
- orders.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
- $("totalCount").textContent=orders.length;
- $("newCount").textContent=orders.filter(o=>(o.status||"New")==="New").length;
- $("deliveredCount").textContent=orders.filter(o=>o.status==="Delivered").length;
- const root=$("ordersList");root.replaceChildren();
- if(!orders.length){root.innerHTML='<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';return}
- for(const o of orders){
-  const card=document.createElement("article");card.className="order";
-  const head=document.createElement("div");head.className="orderhead";
-  const oid=document.createElement("strong");oid.textContent="Order #"+o.id;
-  const dt=document.createElement("span");dt.className="muted";dt.textContent=dateText(o.createdAt);head.append(oid,dt);card.append(head);
-  const p=document.createElement("p");p.textContent="Customer: "+(o.name||o.customerName||o.customer_name||"Customer")+" | Phone: "+(o.phone||o.mobile||o.customerPhone||"—");card.append(p);
-  const itemBox=document.createElement("div");itemBox.className="items";
-  itemBox.textContent=Array.isArray(o.items)&&o.items.length?o.items.map(i=>typeof i==="string"?i:((i.name||i.title||"Item")+" × "+(i.qty||i.quantity||1)+(i.price!==undefined?" (₹"+i.price+")":""))).join("\n"):"Items की जानकारी उपलब्ध नहीं है।";card.append(itemBox);
-  const total=document.createElement("p");total.textContent="Total: ₹"+(o.total??o.grandTotal??o.amount??0);card.append(total);
-  const row=document.createElement("div");row.className="statusrow";
-  const sel=document.createElement("select");const states=["New","Accepted","Preparing","Out for Delivery","Delivered","Cancelled"];const current=o.status||"New";
-  if(!states.includes(current))states.unshift(current);
-  states.forEach(s=>{const op=document.createElement("option");op.value=s;op.textContent=s;op.selected=s===current;sel.append(op)});
-  const btn=document.createElement("button");btn.textContent="Update Status";
-  btn.addEventListener("click",async()=>{btn.disabled=true;btn.textContent="Saving...";try{await updateDoc(doc(db,"orders",o.id),{status:sel.value});btn.textContent="Saved";setTimeout(()=>{btn.disabled=false;btn.textContent="Update Status"},900)}catch(e){btn.disabled=false;btn.textContent="Update Status";showError("ordersError",errorText(e))}});
-  row.append(sel,btn);card.append(row);root.append(card);
- }
+
+function dateText(v) {
+  try {
+    const d = v?.toDate ? v.toDate() : new Date(v);
+    return isNaN(d) ? "" : d.toLocaleString("en-IN");
+  } catch {
+    return "";
+  }
 }
-function startOrders(){
- if(unsubscribe)unsubscribe();hideError("ordersError");$("ordersList").innerHTML='<div class="panel empty">ऑर्डर लोड हो रहे हैं...</div>';
- unsubscribe=onSnapshot(collection(db,"orders"),render,e=>showError("ordersError",errorText(e)));
+
+function render(snapshot) {
+  const orders = snapshot.docs.map(x => ({
+    id: x.id,
+    ...x.data()
+  }));
+
+  orders.sort((a,b) =>
+    (b.createdAt?.toMillis?.() || 0) -
+    (a.createdAt?.toMillis?.() || 0)
+  );
+
+  $("totalCount").textContent = orders.length;
+  $("newCount").textContent =
+    orders.filter(o => (o.status || "New") === "New").length;
+  $("deliveredCount").textContent =
+    orders.filter(o => o.status === "Delivered").length;
+
+  const root = $("ordersList");
+  root.replaceChildren();
+
+  if (!orders.length) {
+    root.innerHTML =
+      '<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';
+    return;
+  }
+
+  for (const o of orders) {
+    const card = document.createElement("article");
+    card.className = "order";
+
+    const head = document.createElement("div");
+    head.className = "orderhead";
+
+    const oid = document.createElement("strong");
+    oid.textContent = "Order #" + o.id;
+
+    const dt = document.createElement("span");
+    dt.className = "muted";
+    dt.textContent = dateText(o.createdAt);
+
+    head.append(oid, dt);
+    card.append(head);
+
+    const p = document.createElement("p");
+    p.textContent =
+      "Customer: " +
+      (o.name || o.customerName || o.customer_name || "Customer") +
+      " | Phone: " +
+      (o.phone || o.mobile || o.customerPhone || "—");
+
+    card.append(p);
+
+    const itemBox = document.createElement("div");
+    itemBox.className = "items";
+
+    itemBox.textContent =
+      Array.isArray(o.items) && o.items.length
+        ? o.items.map(i =>
+            typeof i === "string"
+              ? i
+              : ((i.name || i.title || "Item") +
+                 " × " +
+                 (i.qty || i.quantity || 1) +
+                 (i.price !== undefined ? " (₹" + i.price + ")" : ""))
+          ).join("\n")
+        : "Items की जानकारी उपलब्ध नहीं है।";
+
+    card.append(itemBox);
+
+    const total = document.createElement("p");
+    total.textContent =
+      "Total: ₹" + (o.total ?? o.grandTotal ?? o.amount ?? 0);
+    card.append(total);
+
+    const row = document.createElement("div");
+    row.className = "statusrow";
+
+    const sel = document.createElement("select");
+
+    const states = [
+      "New",
+      "Accepted",
+      "Preparing",
+      "Out for Delivery",
+      "Out for delivery",
+      "Delivered",
+      "Cancelled"
+    ];
+
+    const current = o.status || "New";
+
+    if (!states.includes(current)) {
+      states.unshift(current);
+    }
+
+    states.forEach(s => {
+      const op = document.createElement("option");
+      op.value = s;
+      op.textContent = s;
+      op.selected = s === current;
+      sel.append(op);
+    });
+
+    const btn = document.createElement("button");
+    btn.textContent = "Update Status";
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+      hideError("ordersError");
+
+      try {
+        const user = auth.currentUser;
+
+        if (!user) {
+          throw new Error("Admin Login नहीं है। दोबारा Login करें।");
+        }
+
+        if (user.uid !== ADMIN_UID) {
+          throw new Error("Admin UID मेल नहीं खा रहा: " + user.uid);
+        }
+
+        await updateDoc(doc(db, "orders", o.id), {
+          status: sel.value
+        });
+
+        btn.textContent = "Saved";
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = "Update Status";
+        }, 1000);
+
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "Update Status";
+
+        showError(
+          "ordersError",
+          "ऑर्डर अपडेट नहीं हुआ।\n" +
+          "Order ID: " + o.id + "\n" +
+          "Selected Status: " + sel.value + "\n" +
+          "Logged-in UID: " + (auth.currentUser?.uid || "Not logged in") +
+          "\n" + errorText(e)
+        );
+      }
+    });
+
+    row.append(sel, btn);
+    card.append(row);
+    root.append(card);
+  }
 }
-$("refreshBtn").addEventListener("click",startOrders);
-onAuthStateChanged(auth,user=>{
- if(!user){loginView();if(lastError)showError("loginError",lastError);return}
- if(user.uid!==ADMIN_UID){loginView();showError("loginError","यह Email Admin UID से मेल नहीं खाता।");signOut(auth).catch(()=>{});return}
- hideError("loginError");dashboardView();startOrders();
+
+function startOrders() {
+  if (unsubscribe) unsubscribe();
+
+  hideError("ordersError");
+
+  $("ordersList").innerHTML =
+    '<div class="panel empty">ऑर्डर लोड हो रहे हैं...</div>';
+
+  unsubscribe = onSnapshot(
+    collection(db, "orders"),
+    render,
+    e => showError("ordersError", errorText(e))
+  );
+}
+
+$("refreshBtn").addEventListener("click", startOrders);
+
+onAuthStateChanged(auth, user => {
+  if (!user) {
+    loginView();
+    if (lastError) showError("loginError", lastError);
+    return;
+  }
+
+  if (user.uid !== ADMIN_UID) {
+    loginView();
+    showError(
+      "loginError",
+      "यह Email Admin UID से मेल नहीं खाता। UID: " + user.uid
+    );
+    signOut(auth).catch(() => {});
+    return;
+  }
+
+  hideError("loginError");
+  dashboardView();
+  startOrders();
 });
 </script>
 </body>
