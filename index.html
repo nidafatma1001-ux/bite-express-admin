@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -25,7 +24,7 @@ button{border:0;border-radius:9px;padding:12px 15px;font-size:14px;font-weight:7
 button:disabled{opacity:.55;cursor:wait}
 .dark{background:#374151;color:white}
 .full{width:100%;margin-top:16px}
-.error,.notice{display:none;border-radius:9px;padding:11px;margin-top:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere}
+.error,.notice{display:none;border-radius:9px;padding:11px;margin-top:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-line}
 .error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
 .notice{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
 #dashboard{display:none}
@@ -38,26 +37,18 @@ button:disabled{opacity:.55;cursor:wait}
 .muted{color:var(--muted);font-size:13px}
 .items{white-space:pre-line;background:#f9fafb;padding:10px;border-radius:8px;line-height:1.6;font-size:14px;margin:10px 0}
 .order p{margin:8px 0;overflow-wrap:anywhere}
+.docid{font-size:12px;color:#6b7280;overflow-wrap:anywhere;margin-top:7px}
 .statusrow{display:flex;gap:8px;margin-top:12px}
 .statusrow select{flex:1;min-width:0}
 .empty{text-align:center;color:var(--muted);padding:25px 8px}
-@media(max-width:520px){
-.stats{grid-template-columns:1fr 1fr}
-.statusrow{flex-direction:column}
-.statusrow button{width:100%}
-}
+@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.statusrow{flex-direction:column}.statusrow button{width:100%}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="brand">
-    <div class="mark">B</div>
-    <div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div>
-  </div>
+  <div class="brand"><div class="mark">B</div><div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div></div>
   <button id="logoutBtn" class="dark" style="display:none">Logout</button>
 </header>
-
 <main>
   <section id="loginPanel" class="panel login">
     <h2>Admin Login</h2>
@@ -71,44 +62,24 @@ button:disabled{opacity:.55;cursor:wait}
     <div id="loginError" class="error" role="alert"></div>
     <div class="notice" id="keyNotice">Firebase API Key स्वीकार नहीं हुई। Firebase Console की Web App config से apiKey जाँचें।</div>
   </section>
-
   <section id="dashboard">
     <div class="toolbar">
-      <div>
-        <h2 style="margin:0">Orders</h2>
-        <div class="muted">ग्राहकों के नए ऑर्डर यहाँ दिखेंगे।</div>
-      </div>
+      <div><h2 style="margin:0">Orders</h2><div class="muted">ग्राहकों के नए ऑर्डर यहाँ दिखेंगे।</div></div>
       <button id="refreshBtn" class="dark">Refresh</button>
     </div>
-
     <div class="stats">
       <div class="stat">Total Orders<b id="totalCount">0</b></div>
       <div class="stat">New Orders<b id="newCount">0</b></div>
       <div class="stat">Delivered<b id="deliveredCount">0</b></div>
     </div>
-
     <div id="ordersError" class="error"></div>
     <div id="ordersList"><div class="panel empty">ऑर्डर लोड हो रहे हैं...</div></div>
   </section>
 </main>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  onSnapshot,
-  doc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDAY0UCPHBSetl8D1VJiQ3NqrTVNVzt8hU",
@@ -119,282 +90,121 @@ const firebaseConfig = {
   appId: "1:163486652098:web:9a509f6dd8d7d05bad0d5b",
   measurementId: "G-ZY8M6S8NHB"
 };
-
 const ADMIN_UID = "pGKsautDrQYi7nNDUzbgmYHN8c92";
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 const $ = id => document.getElementById(id);
-
 let unsubscribe = null;
 let lastError = "";
 
-function showError(id, msg) {
-  $(id).textContent = msg;
-  $(id).style.display = "block";
-}
-
-function hideError(id) {
-  $(id).textContent = "";
-  $(id).style.display = "none";
-}
-
-function errorText(e) {
-  return "Firebase Error Code: " +
-    (e?.code || "unknown") +
-    "\nMessage: " +
-    (e?.message || "Unknown error");
-}
-
-function loginView() {
-  $("loginPanel").style.display = "block";
-  $("dashboard").style.display = "none";
-  $("logoutBtn").style.display = "none";
-}
-
-function dashboardView() {
-  $("loginPanel").style.display = "none";
-  $("dashboard").style.display = "block";
-  $("logoutBtn").style.display = "inline-block";
-}
+function showError(id, msg){ $(id).textContent = msg; $(id).style.display = "block"; }
+function hideError(id){ $(id).textContent = ""; $(id).style.display = "none"; }
+function errorText(e){ return "Firebase Error Code: " + (e?.code || "unknown") + "\nMessage: " + (e?.message || "Unknown error"); }
+function loginView(){ $("loginPanel").style.display="block"; $("dashboard").style.display="none"; $("logoutBtn").style.display="none"; }
+function dashboardView(){ $("loginPanel").style.display="none"; $("dashboard").style.display="block"; $("logoutBtn").style.display="inline-block"; }
 
 $("loginForm").addEventListener("submit", async ev => {
-  ev.preventDefault();
-  hideError("loginError");
-  $("keyNotice").style.display = "none";
-
-  $("loginBtn").disabled = true;
-  $("loginBtn").textContent = "PLEASE WAIT...";
-
+  ev.preventDefault(); hideError("loginError"); $("keyNotice").style.display="none";
+  $("loginBtn").disabled=true; $("loginBtn").textContent="PLEASE WAIT...";
   try {
-    await signInWithEmailAndPassword(
-      auth,
-      $("email").value.trim(),
-      $("password").value
-    );
-  } catch (e) {
-    lastError = errorText(e);
-    showError("loginError", lastError);
-
-    if (e?.code === "auth/api-key-not-valid") {
-      $("keyNotice").style.display = "block";
-    }
-  } finally {
-    $("loginBtn").disabled = false;
-    $("loginBtn").textContent = "LOGIN";
-  }
+    await signInWithEmailAndPassword(auth, $("email").value.trim(), $("password").value);
+  } catch(e) {
+    lastError=errorText(e); showError("loginError",lastError);
+    if(e?.code==="auth/api-key-not-valid") $("keyNotice").style.display="block";
+  } finally { $("loginBtn").disabled=false; $("loginBtn").textContent="LOGIN"; }
 });
 
-$("logoutBtn").addEventListener("click", async () => {
-  if (unsubscribe) {
-    unsubscribe();
-    unsubscribe = null;
-  }
-  await signOut(auth);
-  loginView();
+$("logoutBtn").addEventListener("click", async()=>{
+  if(unsubscribe){unsubscribe();unsubscribe=null;}
+  await signOut(auth); loginView();
 });
 
-function dateText(v) {
-  try {
-    const d = v?.toDate ? v.toDate() : new Date(v);
-    return isNaN(d) ? "" : d.toLocaleString("en-IN");
-  } catch {
-    return "";
-  }
+function dateText(v){
+  try{const d=v?.toDate?v.toDate():new Date(v);return isNaN(d)?"":d.toLocaleString("en-IN");}
+  catch{return "";}
 }
 
-function render(snapshot) {
+function render(snapshot){
+  // IMPORTANT: Firebase document ID is stored separately and can never be overwritten by data.id.
   const orders = snapshot.docs.map(x => ({
-    id: x.id,
-    ...x.data()
+    ...x.data(),
+    firebaseDocId: x.id
   }));
+  orders.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
+  $("totalCount").textContent=orders.length;
+  $("newCount").textContent=orders.filter(o=>(o.status||"New")==="New").length;
+  $("deliveredCount").textContent=orders.filter(o=>o.status==="Delivered").length;
+  const root=$("ordersList"); root.replaceChildren();
+  if(!orders.length){root.innerHTML='<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';return;}
 
-  orders.sort((a,b) =>
-    (b.createdAt?.toMillis?.() || 0) -
-    (a.createdAt?.toMillis?.() || 0)
-  );
+  for(const o of orders){
+    const card=document.createElement("article"); card.className="order";
+    const head=document.createElement("div"); head.className="orderhead";
+    const oid=document.createElement("strong");
+    oid.textContent="Order #"+(o.id || o.orderId || o.firebaseDocId);
+    const dt=document.createElement("span"); dt.className="muted"; dt.textContent=dateText(o.createdAt);
+    head.append(oid,dt); card.append(head);
 
-  $("totalCount").textContent = orders.length;
-  $("newCount").textContent =
-    orders.filter(o => (o.status || "New") === "New").length;
-  $("deliveredCount").textContent =
-    orders.filter(o => o.status === "Delivered").length;
+    const docInfo=document.createElement("div"); docInfo.className="docid";
+    docInfo.textContent="Firebase Document ID: "+o.firebaseDocId;
+    card.append(docInfo);
 
-  const root = $("ordersList");
-  root.replaceChildren();
-
-  if (!orders.length) {
-    root.innerHTML =
-      '<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';
-    return;
-  }
-
-  for (const o of orders) {
-    const card = document.createElement("article");
-    card.className = "order";
-
-    const head = document.createElement("div");
-    head.className = "orderhead";
-
-    const oid = document.createElement("strong");
-    oid.textContent = "Order #" + o.id;
-
-    const dt = document.createElement("span");
-    dt.className = "muted";
-    dt.textContent = dateText(o.createdAt);
-
-    head.append(oid, dt);
-    card.append(head);
-
-    const p = document.createElement("p");
-    p.textContent =
-      "Customer: " +
-      (o.name || o.customerName || o.customer_name || "Customer") +
-      " | Phone: " +
-      (o.phone || o.mobile || o.customerPhone || "—");
-
+    const p=document.createElement("p");
+    p.textContent="Customer: "+(o.name||o.customerName||o.customer_name||"Customer")+" | Phone: "+(o.phone||o.mobile||o.customerPhone||"—");
     card.append(p);
 
-    const itemBox = document.createElement("div");
-    itemBox.className = "items";
-
-    itemBox.textContent =
-      Array.isArray(o.items) && o.items.length
-        ? o.items.map(i =>
-            typeof i === "string"
-              ? i
-              : ((i.name || i.title || "Item") +
-                 " × " +
-                 (i.qty || i.quantity || 1) +
-                 (i.price !== undefined ? " (₹" + i.price + ")" : ""))
-          ).join("\n")
-        : "Items की जानकारी उपलब्ध नहीं है।";
-
+    const itemBox=document.createElement("div"); itemBox.className="items";
+    itemBox.textContent=Array.isArray(o.items)&&o.items.length
+      ? o.items.map(i=>typeof i==="string"?i:((i.name||i.title||"Item")+" × "+(i.qty||i.quantity||1)+(i.price!==undefined?" (₹"+i.price+")":""))).join("\n")
+      : "Items की जानकारी उपलब्ध नहीं है।";
     card.append(itemBox);
+    const total=document.createElement("p"); total.textContent="Total: ₹"+(o.total??o.grandTotal??o.amount??0); card.append(total);
 
-    const total = document.createElement("p");
-    total.textContent =
-      "Total: ₹" + (o.total ?? o.grandTotal ?? o.amount ?? 0);
-    card.append(total);
+    const row=document.createElement("div"); row.className="statusrow";
+    const sel=document.createElement("select");
+    const states=["New","Accepted","Preparing","Out for Delivery","Out for delivery","Delivered","Cancelled"];
+    const current=o.status||"New"; if(!states.includes(current)) states.unshift(current);
+    states.forEach(s=>{const op=document.createElement("option");op.value=s;op.textContent=s;op.selected=s===current;sel.append(op);});
 
-    const row = document.createElement("div");
-    row.className = "statusrow";
-
-    const sel = document.createElement("select");
-
-    const states = [
-      "New",
-      "Accepted",
-      "Preparing",
-      "Out for Delivery",
-      "Out for delivery",
-      "Delivered",
-      "Cancelled"
-    ];
-
-    const current = o.status || "New";
-
-    if (!states.includes(current)) {
-      states.unshift(current);
-    }
-
-    states.forEach(s => {
-      const op = document.createElement("option");
-      op.value = s;
-      op.textContent = s;
-      op.selected = s === current;
-      sel.append(op);
-    });
-
-    const btn = document.createElement("button");
-    btn.textContent = "Update Status";
-
-    btn.addEventListener("click", async () => {
-      btn.disabled = true;
-      btn.textContent = "Saving...";
-      hideError("ordersError");
-
-      try {
-        const user = auth.currentUser;
-
-        if (!user) {
-          throw new Error("Admin Login नहीं है। दोबारा Login करें।");
-        }
-
-        if (user.uid !== ADMIN_UID) {
-          throw new Error("Admin UID मेल नहीं खा रहा: " + user.uid);
-        }
-
-        await updateDoc(doc(db, "orders", o.id), {
-          status: sel.value
-        });
-
-        btn.textContent = "Saved";
-        setTimeout(() => {
-          btn.disabled = false;
-          btn.textContent = "Update Status";
-        }, 1000);
-
-      } catch (e) {
-        btn.disabled = false;
-        btn.textContent = "Update Status";
-
-        showError(
-          "ordersError",
-          "ऑर्डर अपडेट नहीं हुआ।\n" +
-          "Order ID: " + o.id + "\n" +
-          "Selected Status: " + sel.value + "\n" +
-          "Logged-in UID: " + (auth.currentUser?.uid || "Not logged in") +
-          "\n" + errorText(e)
-        );
+    const btn=document.createElement("button"); btn.textContent="Update Status";
+    btn.addEventListener("click",async()=>{
+      btn.disabled=true;btn.textContent="Saving...";hideError("ordersError");
+      try{
+        const user=auth.currentUser;
+        if(!user) throw new Error("Admin Login नहीं है। दोबारा Login करें।");
+        if(user.uid!==ADMIN_UID) throw new Error("Admin UID मेल नहीं खा रहा: "+user.uid);
+        if(!o.firebaseDocId) throw new Error("Firebase Document ID उपलब्ध नहीं है।");
+        // Update by the actual Firestore document ID, never by the customer-facing order number.
+        await updateDoc(doc(db,"orders",o.firebaseDocId),{status:sel.value});
+        btn.textContent="Saved";
+        setTimeout(()=>{btn.disabled=false;btn.textContent="Update Status";},1000);
+      }catch(e){
+        btn.disabled=false;btn.textContent="Update Status";
+        showError("ordersError","ऑर्डर अपडेट नहीं हुआ।\nCustomer Order ID: "+(o.id||o.orderId||"—")+
+          "\nFirebase Document ID: "+o.firebaseDocId+
+          "\nSelected Status: "+sel.value+
+          "\nLogged-in UID: "+(auth.currentUser?.uid||"Not logged in")+"\n"+errorText(e));
       }
     });
-
-    row.append(sel, btn);
-    card.append(row);
-    root.append(card);
+    row.append(sel,btn);card.append(row);root.append(card);
   }
 }
 
-function startOrders() {
-  if (unsubscribe) unsubscribe();
-
+function startOrders(){
+  if(unsubscribe) unsubscribe();
   hideError("ordersError");
-
-  $("ordersList").innerHTML =
-    '<div class="panel empty">ऑर्डर लोड हो रहे हैं...</div>';
-
-  unsubscribe = onSnapshot(
-    collection(db, "orders"),
-    render,
-    e => showError("ordersError", errorText(e))
-  );
+  $("ordersList").innerHTML='<div class="panel empty">ऑर्डर लोड हो रहे हैं...</div>';
+  unsubscribe=onSnapshot(collection(db,"orders"),render,e=>showError("ordersError",errorText(e)));
 }
-
-$("refreshBtn").addEventListener("click", startOrders);
-
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    loginView();
-    if (lastError) showError("loginError", lastError);
-    return;
+$("refreshBtn").addEventListener("click",startOrders);
+onAuthStateChanged(auth,user=>{
+  if(!user){loginView();if(lastError)showError("loginError",lastError);return;}
+  if(user.uid!==ADMIN_UID){
+    loginView();showError("loginError","यह Email Admin UID से मेल नहीं खाता। UID: "+user.uid);
+    signOut(auth).catch(()=>{});return;
   }
-
-  if (user.uid !== ADMIN_UID) {
-    loginView();
-    showError(
-      "loginError",
-      "यह Email Admin UID से मेल नहीं खाता। UID: " + user.uid
-    );
-    signOut(auth).catch(() => {});
-    return;
-  }
-
-  hideError("loginError");
-  dashboardView();
-  startOrders();
+  hideError("loginError");dashboardView();startOrders();
 });
 </script>
 </body>
