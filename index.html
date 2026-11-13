@@ -10,180 +10,232 @@
 :root{--ink:#111827;--yellow:#facc15;--bg:#f4f4f5;--muted:#6b7280}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
-header{background:var(--ink);color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+header{background:var(--ink);color:white;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:42px;height:42px;border-radius:12px;background:var(--yellow);color:#111;display:grid;place-items:center;font-weight:900;font-size:20px}
 h1{font-size:19px;margin:0}
 header small{color:#d1d5db}
-main{max-width:950px;margin:20px auto;padding:0 13px 40px}
-.panel,.stat,.order,.food{background:white;border-radius:13px;padding:15px;box-shadow:0 3px 14px #0000000a;margin-bottom:12px}
-.login{max-width:430px;margin:45px auto}
+main{max-width:950px;margin:20px auto;padding:0 14px 35px}
+.panel,.stat,.order,.food{background:#fff;border-radius:14px;padding:17px;box-shadow:0 3px 14px #0000000a}
+.login{max-width:430px;margin:48px auto}
 h2{font-size:19px;margin:0 0 14px}
-label{display:block;font-weight:bold;font-size:14px;margin:12px 0 6px}
-input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:9px;font-size:15px;background:white}
-button{border:0;border-radius:9px;padding:11px 14px;font-size:14px;font-weight:bold;background:var(--yellow);color:#111;cursor:pointer}
-button:disabled{opacity:.5}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:9px;font-size:16px;background:white}
+button{border:0;border-radius:9px;padding:12px 15px;font-size:14px;font-weight:700;background:var(--yellow);color:#111;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
 .dark{background:#374151;color:white}
 .danger{background:#fee2e2;color:#991b1b}
-.green{background:#dcfce7;color:#166534}
-.full{width:100%;margin-top:14px}
-.error,.notice{display:none;padding:11px;border-radius:9px;margin-top:12px;white-space:pre-line;overflow-wrap:anywhere}
-.error{background:#fee2e2;color:#991b1b}
-.notice{background:#fef3c7;color:#92400e}
+.full{width:100%;margin-top:16px}
+.error,.success{display:none;border-radius:9px;padding:11px;margin-top:12px;font-size:14px;line-height:1.45;overflow-wrap:anywhere;white-space:pre-line}
+.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.success{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
 #dashboard{display:none}
-.tabs{display:flex;gap:7px;overflow-x:auto;margin:16px 0}
-.tabs button{white-space:nowrap;background:#e5e7eb}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{font-size:13px;color:var(--muted)}
+.stat b{display:block;font-size:25px;color:var(--ink);margin-top:5px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.tabs button{background:#e5e7eb}
 .tabs button.active{background:var(--yellow)}
 .tabpage{display:none}
 .tabpage.active{display:block}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:13px}
-.stat{font-size:13px;color:var(--muted)}
-.stat b{display:block;font-size:24px;color:var(--ink);margin-top:5px}
-.order{margin:12px 0}
-.orderhead{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;border-bottom:1px solid #eee;padding-bottom:9px}
+.order,.food{margin:12px 0}
+.orderhead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:1px solid #eee;padding-bottom:10px}
 .muted{color:var(--muted);font-size:13px}
 .items{white-space:pre-line;background:#f9fafb;padding:10px;border-radius:8px;line-height:1.6;font-size:14px;margin:10px 0}
-.statusrow{display:flex;gap:8px;margin-top:10px}
-.statusrow select{flex:1}
-.food{display:flex;gap:12px;align-items:center}
-.food img{width:85px;height:85px;object-fit:cover;border-radius:10px;background:#eee}
+.order p{margin:8px 0;overflow-wrap:anywhere}
+.docid{font-size:12px;color:#6b7280;overflow-wrap:anywhere;margin-top:7px}
+.statusrow{display:flex;gap:8px;margin-top:12px}
+.statusrow select{flex:1;min-width:0}
+.empty{text-align:center;color:var(--muted);padding:25px 8px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.span2{grid-column:1/-1}
+.foodrow{display:flex;gap:12px;align-items:center}
+.foodrow img{width:86px;height:86px;object-fit:cover;border-radius:10px;background:#eee}
 .foodinfo{flex:1;min-width:0}
-.foodinfo b{display:block;margin-bottom:5px}
-.foodactions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.foodactions button{padding:8px 10px}
-.checkrow{display:flex;align-items:center;gap:8px;margin:9px 0}
-.checkrow input{width:20px;height:20px}
-.checkrow label{margin:0}
-.empty{text-align:center;color:var(--muted);padding:22px}
+.foodinfo strong{display:block;margin-bottom:5px}
+.foodactions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#ecfdf5;color:#065f46;font-size:12px}
+.pill.off{background:#fee2e2;color:#991b1b}
 @media(max-width:520px){
 .stats{grid-template-columns:1fr 1fr}
 .statusrow{flex-direction:column}
-.food{align-items:flex-start}
-.food img{width:72px;height:72px}
+.statusrow button{width:100%}
+.formgrid{grid-template-columns:1fr}
+.span2{grid-column:auto}
+.foodrow{align-items:flex-start}
 }
 </style>
 </head>
 <body>
 
 <header>
- <div>
-  <h1>🍔 BITE EXPRESS</h1>
-  <small>Admin Panel</small>
- </div>
- <button id="logoutBtn" class="dark" style="display:none">Logout</button>
+<div class="brand">
+<div class="mark">B</div>
+<div><h1>BITE EXPRESS</h1><small>Admin Panel</small></div>
+</div>
+<button id="logoutBtn" class="dark" style="display:none">Logout</button>
 </header>
 
 <main>
 <section id="loginPanel" class="panel login">
- <h2>Admin Login</h2>
- <form id="loginForm">
-  <label>Email</label>
-  <input id="email" type="email" required placeholder="Admin Email">
-  <label>Password</label>
-  <input id="password" type="password" required placeholder="Password">
-  <button id="loginBtn" class="full">LOGIN</button>
- </form>
- <div id="loginError" class="error"></div>
+<h2>Admin Login</h2>
+<form id="loginForm">
+<label for="email">Email</label>
+<input id="email" type="email" autocomplete="username" placeholder="Admin email" required>
+<label for="password">Password</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="Password" required>
+<button id="loginBtn" class="full" type="submit">LOGIN</button>
+</form>
+<div id="loginError" class="error"></div>
 </section>
 
 <section id="dashboard">
- <div class="tabs">
-  <button class="active" data-tab="ordersTab">📦 Orders</button>
-  <button data-tab="menuTab">🍔 Menu Management</button>
-  <button data-tab="settingsTab">⚙️ Settings</button>
-  <button data-tab="offersTab">🏷️ Discount Offers</button>
- </div>
+<div class="toolbar">
+<div>
+<h2 style="margin:0">Admin Dashboard</h2>
+<div class="muted">Orders, Menu, Offers और Settings</div>
+</div>
+<button id="refreshBtn" class="dark">Refresh Orders</button>
+</div>
 
- <section id="ordersTab" class="tabpage active">
-  <div class="panel">
-   <h2>Orders</h2>
-   <button id="refreshBtn" class="dark">Refresh Orders</button>
-   <div class="stats" style="margin-top:14px">
-    <div class="stat">Total Orders<b id="totalCount">0</b></div>
-    <div class="stat">New Orders<b id="newCount">0</b></div>
-    <div class="stat">Delivered<b id="deliveredCount">0</b></div>
-   </div>
-   <div id="ordersError" class="error"></div>
-   <div id="ordersList"><div class="empty">Orders loading...</div></div>
-  </div>
- </section>
+<div class="tabs">
+<button class="active" data-tab="ordersTab">Orders</button>
+<button data-tab="menuTab">Menu Management</button>
+<button data-tab="categoriesTab">Categories</button>
+<button data-tab="offersTab">Discount Offers</button>
+<button data-tab="settingsTab">Settings</button>
+</div>
 
- <section id="menuTab" class="tabpage">
-  <div class="panel">
-   <h2 id="menuFormTitle">➕ नया खाना जोड़ें</h2>
-   <form id="menuForm">
-    <input type="hidden" id="editId">
-    <label>खाने का नाम</label>
-    <input id="foodName" required placeholder="जैसे Veg Burger">
-    <label>Category</label>
-    <input id="foodCategory" required placeholder="जैसे Burger, Pizza, Drinks">
-    <label>Price (₹)</label>
-    <input id="foodPrice" type="number" min="0" step="0.01" required placeholder="99">
-    <label>खाने की फोटो (Gallery से चुनें)</label>
-    <input id="foodImage" type="file" accept="image/*">
-    <div id="imagePreview" class="muted"></div>
-    <label class="checkrow">
-     <input id="foodAvailable" type="checkbox" checked>
-     <span>यह खाना अभी Available है</span>
-    </label>
-    <button id="saveFoodBtn" class="full">Save Food</button>
-    <button type="button" id="cancelEditBtn" class="full dark" style="display:none">Cancel Edit</button>
-   </form>
-   <div id="menuError" class="error"></div>
-   <div id="menuNotice" class="notice"></div>
-  </div>
-  <div class="panel">
-   <h2>📋 आपका Menu</h2>
-   <div id="menuList"><div class="empty">Menu loading...</div></div>
-  </div>
- </section>
+<section id="ordersTab" class="tabpage active">
+<div class="stats">
+<div class="stat">Total Orders<b id="totalCount">0</b></div>
+<div class="stat">New Orders<b id="newCount">0</b></div>
+<div class="stat">Delivered<b id="deliveredCount">0</b></div>
+</div>
+<div id="ordersError" class="error"></div>
+<div id="ordersList"><div class="panel empty">ऑर्डर लोड हो रहे हैं...</div></div>
+</section>
 
- <section id="settingsTab" class="tabpage">
-  <div class="panel">
-   <h2>⚙️ App Settings</h2>
-   <label>Delivery Charge (₹)</label>
-   <input id="deliveryCharge" type="number" min="0" step="0.01" placeholder="Delivery Charge">
-   <button id="saveSettingsBtn" class="full">Save Delivery Charge</button>
-   <div id="settingsError" class="error"></div>
-   <div id="settingsNotice" class="notice"></div>
-  </div>
- </section>
+<section id="menuTab" class="tabpage">
+<div class="panel">
+<h2 id="menuFormTitle">नया खाना जोड़ें</h2>
+<form id="foodForm">
+<input id="foodId" type="hidden">
+<div class="formgrid">
+<div>
+<label for="foodName">खाने का नाम</label>
+<input id="foodName" placeholder="Veg Burger" required>
+</div>
+<div>
+<label for="foodCategory">Category</label>
+<input id="foodCategory" list="categoryOptions" placeholder="Burger" required>
+<datalist id="categoryOptions"></datalist>
+</div>
+<div>
+<label for="foodPrice">कीमत (₹)</label>
+<input id="foodPrice" type="number" min="0" step="1" required>
+</div>
+<div>
+<label for="foodAvailable">Availability</label>
+<select id="foodAvailable">
+<option value="true">Available</option>
+<option value="false">Out of Stock</option>
+</select>
+</div>
+<div>
+<label for="availableFrom">रोज शुरू होने का समय</label>
+<input id="availableFrom" type="time">
+</div>
+<div>
+<label for="availableTo">रोज बंद होने का समय</label>
+<input id="availableTo" type="time">
+</div>
+<div class="span2">
+<label for="foodImage">खाने की फोटो</label>
+<input id="foodImage" type="file" accept="image/*">
+<div class="muted">Edit करते समय पुरानी फोटो रखने के लिए खाली छोड़ें।</div>
+</div>
+</div>
+<button id="foodSaveBtn" class="full" type="submit">खाना Save करें</button>
+<button id="foodCancelBtn" class="full dark" type="button" style="display:none">Edit Cancel करें</button>
+</form>
+<div id="menuMessage" class="success"></div>
+<div id="menuError" class="error"></div>
+</div>
+<h2 style="margin-top:20px">आपका Menu</h2>
+<div id="menuList"></div>
+</section>
 
- <section id="offersTab" class="tabpage">
-  <div class="panel">
-   <h2>🏷️ Discount Offer लगाएँ</h2>
-   <p class="muted">जिन खाने की चीजों पर ऑफर लगाना है, उन्हें चुनें।</p>
-   <div id="offerFoodList">Menu loading...</div>
-   <label>Discount Percentage (%)</label>
-   <input id="discountPercent" type="number" min="0" max="100" step="0.01" placeholder="जैसे 20">
-   <label>Offer शुरू होने की तारीख और समय</label>
-   <input id="offerStart" type="datetime-local">
-   <label>Offer खत्म होने की तारीख और समय (वैकल्पिक)</label>
-   <input id="offerEnd" type="datetime-local">
-   <button id="applyOfferBtn" class="full">चुने हुए खाने पर Offer लगाएँ</button>
-   <button id="removeOfferBtn" class="full danger">चुने हुए खाने से Offer हटाएँ</button>
-   <div id="offerError" class="error"></div>
-   <div id="offerNotice" class="notice"></div>
-  </div>
-  <div class="panel">
-   <h2>ℹ️ Offer कैसे काम करेगा?</h2>
-   <p class="muted">शुरू होने और खत्म होने का समय Firestore में सेव होगा। ग्राहक ऐप में Countdown और सही Discount दिखाने के लिए Customer App को भी इस Offer डेटा से जोड़ना होगा। वह अगला काम है।</p>
-  </div>
- </section>
+<section id="categoriesTab" class="tabpage">
+<div class="panel">
+<h2>Category Management</h2>
+<form id="categoryForm">
+<label for="categoryName">नई Category का नाम</label>
+<input id="categoryName" placeholder="Biryani" required>
+<button class="full" type="submit">Category जोड़ें</button>
+</form>
+<div id="categoryMessage" class="success"></div>
+<div id="categoryError" class="error"></div>
+</div>
+<div id="categoryList"></div>
+</section>
+
+<section id="offersTab" class="tabpage">
+<div class="panel">
+<h2>Discount Offer बनाएं / बदलें</h2>
+<div class="muted">एक या कई खाने चुनें। तय समय पर छूट अपने आप लागू होगी।</div>
+<form id="offerForm">
+<label>खाने चुनें</label>
+<div id="offerItems" class="panel empty">Menu लोड हो रहा है...</div>
+<label for="discountPercent">Discount प्रतिशत (%)</label>
+<input id="discountPercent" type="number" min="1" max="99" required>
+<label for="offerStartAt">Offer शुरू होने का समय</label>
+<input id="offerStartAt" type="datetime-local" required>
+<label for="offerEndAt">Offer खत्म होने का समय (वैकल्पिक)</label>
+<input id="offerEndAt" type="datetime-local">
+<button id="offerSaveBtn" class="full" type="submit">Offer लागू करें</button>
+</form>
+<div class="muted" style="margin-top:10px">खत्म होने का समय खाली रखने पर Offer मैन्युअल हटाने तक रहेगा।</div>
+<div id="offerMessage" class="success"></div>
+<div id="offerError" class="error"></div>
+</div>
+<h2 style="margin-top:20px">मौजूदा Offers</h2>
+<div id="activeOffers"></div>
+</section>
+
+<section id="settingsTab" class="tabpage">
+<div class="panel">
+<h2>App Settings</h2>
+<form id="settingsForm">
+<label for="deliveryCharge">Delivery Charge (₹)</label>
+<input id="deliveryCharge" type="number" min="0" step="1" required>
+<label><input id="codEnabled" type="checkbox" style="width:auto;margin-right:8px">Cash on Delivery चालू रखें</label>
+<label><input id="onlineEnabled" type="checkbox" style="width:auto;margin-right:8px">Online Payment चालू रखें</label>
+<label for="upiId">UPI ID</label>
+<input id="upiId" placeholder="example@upi">
+<button id="settingsSaveBtn" class="full" type="submit">Settings Save करें</button>
+</form>
+<div id="settingsMessage" class="success"></div>
+<div id="settingsError" class="error"></div>
+</div>
+</section>
 </section>
 </main>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 import {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
-import {getFirestore,collection,onSnapshot,doc,updateDoc,addDoc,deleteDoc,setDoc,getDoc,serverTimestamp,Timestamp} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+import {getFirestore,collection,onSnapshot,doc,updateDoc,addDoc,deleteDoc,setDoc,getDoc,serverTimestamp,Timestamp,writeBatch} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 
 const firebaseConfig={
- apiKey:"AIzaSyDAY0UCPHBSetl8D1VJiQ3NqrTVNVzt8hU",
- authDomain:"bite-express-f7d75.firebaseapp.com",
- projectId:"bite-express-f7d75",
- storageBucket:"bite-express-f7d75.firebasestorage.app",
- messagingSenderId:"163486652098",
- appId:"1:163486652098:web:9a509f6dd8d7d05bad0d5b",
- measurementId:"G-ZY8M6S8NHB"
+apiKey:"AIzaSyDAY0UCPHBSetl8D1VJiQ3NqrTVNVzt8U",
+authDomain:"bite-express-f7d75.firebaseapp.com",
+projectId:"bite-express-f7d75",
+storageBucket:"bite-express-f7d75.firebasestorage.app",
+messagingSenderId:"163486652098",
+appId:"1:163486652098:web:9a509f6dd8d7d05bad0d5b",
+measurementId:"G-ZY8M6S8NHB"
 };
 
 const ADMIN_UID="pGKsautDrQYi7nNDUzbgmYHN8c92";
@@ -195,285 +247,370 @@ const auth=getAuth(app);
 const db=getFirestore(app);
 const $=id=>document.getElementById(id);
 
-let ordersUnsub=null,menuUnsub=null;
-let menuItems=[];
-let currentImage="";
-let settingsLoaded=false;
+let stopOrders=null,stopMenu=null,stopCategories=null;
+let menuRows=[],categoryRows=[];
 
-function show(id,msg){$(id).textContent=msg;$(id).style.display="block"}
-function hide(id){$(id).textContent="";$(id).style.display="none"}
-function err(e){return (e?.code||"Error")+"\n"+(e?.message||e)}
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
-document.querySelectorAll("[data-tab]").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("active",b===btn));
-  document.querySelectorAll(".tabpage").forEach(p=>p.classList.toggle("active",p.id===btn.dataset.tab));
- });
-});
+function show(id,msg,kind="error"){
+const e=$(id);e.textContent=msg;e.className=kind;e.style.display="block";
+}
+function hide(id){$(id).textContent="";$(id).style.display="none";}
+function err(e){return "Firebase Error: "+(e?.code||"unknown")+"\n"+(e?.message||e);}
+
+function stopAll(){
+[stopOrders,stopMenu,stopCategories].forEach(f=>{if(f)f();});
+stopOrders=stopMenu=stopCategories=null;
+}
+function loginView(){
+$("loginPanel").style.display="block";
+$("dashboard").style.display="none";
+$("logoutBtn").style.display="none";
+}
+function dashboardView(){
+$("loginPanel").style.display="none";
+$("dashboard").style.display="block";
+$("logoutBtn").style.display="inline-block";
+}
 
 $("loginForm").addEventListener("submit",async e=>{
- e.preventDefault();hide("loginError");
- $("loginBtn").disabled=true;$("loginBtn").textContent="PLEASE WAIT...";
- try{
-  await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
- }catch(e){show("loginError",err(e))}
- finally{$("loginBtn").disabled=false;$("loginBtn").textContent="LOGIN"}
+e.preventDefault();hide("loginError");
+$("loginBtn").disabled=true;
+$("loginBtn").textContent="PLEASE WAIT...";
+try{
+await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
+}catch(x){show("loginError",err(x));}
+finally{$("loginBtn").disabled=false;$("loginBtn").textContent="LOGIN";}
 });
 
-$("logoutBtn").onclick=async()=>{
- if(ordersUnsub)ordersUnsub();
- if(menuUnsub)menuUnsub();
- await signOut(auth);
-};
+$("logoutBtn").addEventListener("click",async()=>{
+stopAll();await signOut(auth);loginView();
+});
 
-function showDashboard(){
- $("loginPanel").style.display="none";
- $("dashboard").style.display="block";
- $("logoutBtn").style.display="block";
-}
-function showLogin(){
- $("loginPanel").style.display="block";
- $("dashboard").style.display="none";
- $("logoutBtn").style.display="none";
-}
+document.querySelectorAll("[data-tab]").forEach(b=>{
+b.addEventListener("click",()=>{
+document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));
+document.querySelectorAll(".tabpage").forEach(x=>x.classList.toggle("active",x.id===b.dataset.tab));
+});
+});
 
 function dateText(v){
- try{
-  const d=v?.toDate?v.toDate():new Date(v);
-  return isNaN(d)?"":d.toLocaleString("en-IN");
- }catch{return ""}
+try{
+const d=v?.toDate?v.toDate():new Date(v);
+return isNaN(d.getTime())?"":d.toLocaleString("en-IN");
+}catch{return "";}
 }
 
 /* ORDERS */
 function startOrders(){
- if(ordersUnsub)ordersUnsub();
- $("ordersList").innerHTML='<div class="empty">Orders loading...</div>';
- ordersUnsub=onSnapshot(collection(db,"orders"),snap=>{
-  const orders=snap.docs.map(d=>({...d.data(),firebaseDocId:d.id}));
-  orders.sort((a,b)=>(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0));
-  $("totalCount").textContent=orders.length;
-  $("newCount").textContent=orders.filter(o=>(o.status||"New")==="New").length;
-  $("deliveredCount").textContent=orders.filter(o=>o.status==="Delivered").length;
-  $("ordersList").replaceChildren();
-  if(!orders.length){$("ordersList").innerHTML='<div class="empty">अभी कोई Order नहीं है।</div>';return}
-  orders.forEach(o=>{
-   const card=document.createElement("div");card.className="order";
-   const h=document.createElement("div");h.className="orderhead";
-   const id=document.createElement("b");id.textContent="Order #"+(o.id||o.firebaseDocId);
-   const dt=document.createElement("span");dt.className="muted";dt.textContent=dateText(o.createdAt);
-   h.append(id,dt);card.append(h);
-   const p=document.createElement("p");
-   p.textContent="Customer: "+(o.name||"—")+" | Phone: "+(o.phone||"—");
-   card.append(p);
-   const a=document.createElement("p");a.textContent="Address: "+(o.address||"—");card.append(a);
-   const items=document.createElement("div");items.className="items";
-   items.textContent=Array.isArray(o.items)?o.items.map(x=>(x.name||"Item")+" × "+(x.quantity||x.qty||1)+" (₹"+(x.price||0)+")").join("\n"):"";
-   card.append(items);
-   const total=document.createElement("b");total.textContent="Total: ₹"+(o.total||0);card.append(total);
-   const row=document.createElement("div");row.className="statusrow";
-   const sel=document.createElement("select");
-   ["New","Accepted","Preparing","Out for Delivery","Delivered","Cancelled"].forEach(s=>{
-    const op=document.createElement("option");op.value=s;op.textContent=s;op.selected=(o.status||"New")===s;sel.append(op);
-   });
-   const btn=document.createElement("button");btn.textContent="Update Status";
-   btn.onclick=async()=>{
-    btn.disabled=true;
-    try{
-     if(auth.currentUser?.uid!==ADMIN_UID)throw new Error("Admin UID mismatch");
-     await updateDoc(doc(db,"orders",o.firebaseDocId),{status:sel.value});
-     btn.textContent="Saved";
-    }catch(e){show("ordersError",err(e));btn.textContent="Retry"}
-    finally{setTimeout(()=>{btn.disabled=false;btn.textContent="Update Status"},1200)}
-   };
-   row.append(sel,btn);card.append(row);$("ordersList").append(card);
-  });
- },e=>show("ordersError",err(e)));
+if(stopOrders)stopOrders();
+hide("ordersError");
+stopOrders=onSnapshot(collection(db,"orders"),snap=>{
+const a=snap.docs.map(d=>({...d.data(),firebaseDocId:d.id}));
+a.sort((x,y)=>(y.createdAt?.seconds||0)-(x.createdAt?.seconds||0));
+$("totalCount").textContent=a.length;
+$("newCount").textContent=a.filter(x=>(x.status||"New")==="New").length;
+$("deliveredCount").textContent=a.filter(x=>x.status==="Delivered").length;
+
+const root=$("ordersList");root.replaceChildren();
+if(!a.length){root.innerHTML='<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';return;}
+
+for(const o of a){
+const c=document.createElement("article");c.className="order";
+const h=document.createElement("div");h.className="orderhead";
+const t=document.createElement("strong");
+t.textContent="Order #"+(o.id||o.orderId||o.firebaseDocId);
+const dt=document.createElement("span");dt.className="muted";dt.textContent=dateText(o.createdAt);
+h.append(t,dt);c.append(h);
+
+const docid=document.createElement("div");docid.className="docid";
+docid.textContent="Firebase Document ID: "+o.firebaseDocId;c.append(docid);
+
+const p=document.createElement("p");
+p.textContent="Customer: "+(o.name||o.customerName||"—")+" | Phone: "+(o.phone||o.mobile||"—")+" | Address: "+(o.address||"—");
+c.append(p);
+
+const it=document.createElement("div");it.className="items";
+it.textContent=Array.isArray(o.items)?o.items.map(i=>typeof i==="string"?i:((i.name||i.title||"Item")+" × "+(i.qty||i.quantity||1))).join("\n"):"Items जानकारी उपलब्ध नहीं";
+c.append(it);
+
+const total=document.createElement("p");
+total.textContent="Total: ₹"+(o.total??o.grandTotal??o.amount??0)+" | Payment: "+(o.paymentMethod||o.paymentType||"—");
+c.append(total);
+
+const row=document.createElement("div");row.className="statusrow";
+const sel=document.createElement("select");
+["New","Accepted","Preparing","Out for Delivery","Delivered","Cancelled"].forEach(s=>{
+const op=document.createElement("option");op.value=s;op.textContent=s;op.selected=s===(o.status||"New");sel.append(op);
+});
+const btn=document.createElement("button");btn.textContent="Update Status";
+btn.onclick=async()=>{
+btn.disabled=true;
+try{
+await updateDoc(doc(db,"orders",o.firebaseDocId),{status:sel.value,updatedAt:serverTimestamp()});
+btn.textContent="Saved";
+}catch(e){show("ordersError",err(e));btn.disabled=false;btn.textContent="Update Status";}
+};
+row.append(sel,btn);c.append(row);root.append(c);
 }
-$("refreshBtn").onclick=startOrders;
+},e=>show("ordersError",err(e)));
+}
 
 /* MENU */
+function renderMenu(snap){
+menuRows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+const root=$("menuList");root.replaceChildren();
+if(!menuRows.length)root.innerHTML='<div class="panel empty">Menu खाली है।</div>';
+
+for(const f of menuRows){
+const c=document.createElement("article");c.className="food";
+const r=document.createElement("div");r.className="foodrow";
+const im=document.createElement("img");im.src=f.imageUrl||"";im.alt=f.name||"Food";
+im.onerror=()=>im.style.display="none";
+const info=document.createElement("div");info.className="foodinfo";
+info.innerHTML="<strong>"+esc(f.name)+"</strong><div class='muted'>"+esc(f.category)+" • ₹"+esc(f.price)+"</div><div class='muted'>समय: "+esc(f.availableFrom||"पूरे दिन")+" - "+esc(f.availableTo||"पूरे दिन")+"</div><span class='pill "+(f.available===false?"off":"")+"'>"+(f.available===false?"Out of Stock":"Available")+"</span>";
+r.append(im,info);c.append(r);
+const a=document.createElement("div");a.className="foodactions";
+const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>editFood(f);
+const del=document.createElement("button");del.className="danger";del.textContent="Delete";
+del.onclick=async()=>{
+if(confirm(f.name+" delete करना है?")){
+try{await deleteDoc(doc(db,"menu",f.id));}
+catch(e){show("menuError",err(e));}
+}
+};
+a.append(edit,del);c.append(a);root.append(c);
+}
+renderOfferChoices();renderOffers();
+}
+
 function startMenu(){
- if(menuUnsub)menuUnsub();
- menuUnsub=onSnapshot(collection(db,"menu"),snap=>{
-  menuItems=snap.docs.map(d=>({id:d.id,...d.data()}));
-  renderMenu();
-  renderOfferFoods();
- },e=>show("menuError",err(e)));
+if(stopMenu)stopMenu();
+stopMenu=onSnapshot(collection(db,"menu"),renderMenu,e=>show("menuError",err(e)));
 }
 
-function renderMenu(){
- const root=$("menuList");root.replaceChildren();
- if(!menuItems.length){root.innerHTML='<div class="empty">अभी Menu खाली है। ऊपर से खाना जोड़ें।</div>';return}
- menuItems.forEach(f=>{
-  const box=document.createElement("div");box.className="food";
-  const img=document.createElement("img");img.src=f.image||"";img.alt=f.name||"Food";
-  const info=document.createElement("div");info.className="foodinfo";
-  const name=document.createElement("b");name.textContent=f.name||"Unnamed";
-  const detail=document.createElement("div");detail.className="muted";
-  detail.textContent=(f.category||"") +" • ₹"+(f.price||0);
-  const status=document.createElement("div");status.textContent=f.available===false?"❌ Out of Stock":"✅ Available";
-  info.append(name,detail,status);
-  const actions=document.createElement("div");actions.className="foodactions";
-  const edit=document.createElement("button");edit.textContent="Edit";
-  edit.onclick=()=>editFood(f);
-  const toggle=document.createElement("button");toggle.textContent=f.available===false?"Make Available":"Out of Stock";
-  toggle.className="dark";
-  toggle.onclick=()=>updateDoc(doc(db,"menu",f.id),{available:f.available===false});
-  const del=document.createElement("button");del.textContent="Delete";del.className="danger";
-  del.onclick=async()=>{if(confirm("क्या यह खाना हटाना है?")){try{await deleteDoc(doc(db,"menu",f.id))}catch(e){show("menuError",err(e))}}};
-  actions.append(edit,toggle,del);info.append(actions);box.append(img,info);root.append(box);
- });
-}
-
-function resetMenuForm(){
- $("menuForm").reset();$("editId").value="";currentImage="";
- $("menuFormTitle").textContent="➕ नया खाना जोड़ें";
- $("saveFoodBtn").textContent="Save Food";
- $("cancelEditBtn").style.display="none";
- $("imagePreview").textContent="";
-}
 function editFood(f){
- $("editId").value=f.id;
- $("foodName").value=f.name||"";
- $("foodCategory").value=f.category||"";
- $("foodPrice").value=f.price||0;
- $("foodAvailable").checked=f.available!==false;
- currentImage=f.image||"";
- $("imagePreview").textContent=currentImage?"पुरानी फोटो मौजूद है। नई फोटो चुनना वैकल्पिक है।":"";
- $("menuFormTitle").textContent="✏️ खाना Edit करें";
- $("saveFoodBtn").textContent="Update Food";
- $("cancelEditBtn").style.display="block";
- window.scrollTo({top:0,behavior:"smooth"});
+$("foodId").value=f.id;
+$("foodName").value=f.name||"";
+$("foodCategory").value=f.category||"";
+$("foodPrice").value=f.price??"";
+$("foodAvailable").value=String(f.available!==false);
+$("availableFrom").value=f.availableFrom||"";
+$("availableTo").value=f.availableTo||"";
+$("foodImage").value="";
+$("menuFormTitle").textContent="खाना Edit करें";
+$("foodSaveBtn").textContent="Changes Save करें";
+$("foodCancelBtn").style.display="block";
+window.scrollTo({top:0,behavior:"smooth"});
 }
-$("cancelEditBtn").onclick=resetMenuForm;
+
+function resetFood(){
+$("foodForm").reset();$("foodId").value="";
+$("menuFormTitle").textContent="नया खाना जोड़ें";
+$("foodSaveBtn").textContent="खाना Save करें";
+$("foodCancelBtn").style.display="none";
+}
+$("foodCancelBtn").onclick=resetFood;
 
 async function uploadImage(file){
- if(!file)return currentImage;
- if(file.size>5*1024*1024)throw new Error("फोटो 5 MB से छोटी होनी चाहिए।");
- const data=new FormData();
- data.append("file",file);
- data.append("upload_preset",UPLOAD_PRESET);
- const response=await fetch("https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/image/upload",{method:"POST",body:data});
- const result=await response.json();
- if(!response.ok)throw new Error(result.error?.message||"Photo upload failed");
- return result.secure_url;
+const fd=new FormData();
+fd.append("file",file);
+fd.append("upload_preset",UPLOAD_PRESET);
+const r=await fetch("https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/image/upload",{method:"POST",body:fd});
+const d=await r.json();
+if(!r.ok)throw new Error(d?.error?.message||"Cloudinary upload failed");
+return d.secure_url;
 }
 
-$("foodImage").addEventListener("change",()=>{
- const file=$("foodImage").files[0];
- $("imagePreview").textContent=file?"Selected: "+file.name:"";
+$("foodForm").addEventListener("submit",async e=>{
+e.preventDefault();hide("menuError");hide("menuMessage");
+const b=$("foodSaveBtn"),file=$("foodImage").files[0],id=$("foodId").value;
+b.disabled=true;b.textContent="Please wait...";
+try{
+let imageUrl="";
+if(file){
+if(!file.type.startsWith("image/"))throw Error("Image चुनें");
+if(file.size>5*1024*1024)throw Error("फोटो 5 MB से छोटी रखें");
+imageUrl=await uploadImage(file);
+}else if(!id)throw Error("नया खाना जोड़ने के लिए फोटो चुनें");
+
+const data={
+name:$("foodName").value.trim(),
+category:$("foodCategory").value.trim(),
+price:Number($("foodPrice").value),
+available:$("foodAvailable").value==="true",
+availableFrom:$("availableFrom").value||"",
+availableTo:$("availableTo").value||"",
+updatedAt:serverTimestamp()
+};
+if(imageUrl)data.imageUrl=imageUrl;
+if(id)await updateDoc(doc(db,"menu",id),data);
+else{
+data.imageUrl=imageUrl;data.createdAt=serverTimestamp();
+await addDoc(collection(db,"menu"),data);
+}
+show("menuMessage",id?"खाना अपडेट हो गया।":"नया खाना जोड़ दिया गया।","success");
+resetFood();
+}catch(x){show("menuError",x.message||err(x));}
+finally{
+b.disabled=false;
+if(!$("foodId").value)b.textContent="खाना Save करें";
+}
 });
 
-$("menuForm").addEventListener("submit",async e=>{
- e.preventDefault();hide("menuError");hide("menuNotice");
- $("saveFoodBtn").disabled=true;$("saveFoodBtn").textContent="Saving...";
- try{
-  const file=$("foodImage").files[0];
-  const image=await uploadImage(file);
-  if(!image)throw new Error("पहले खाने की फोटो Gallery से चुनें।");
-  const data={
-   name:$("foodName").value.trim(),
-   category:$("foodCategory").value.trim(),
-   price:Number($("foodPrice").value),
-   image,
-   available:$("foodAvailable").checked,
-   updatedAt:serverTimestamp()
-  };
-  if(!data.name||!data.category||!Number.isFinite(data.price)||data.price<0)throw new Error("नाम, Category और सही Price भरें।");
-  const id=$("editId").value;
-  if(id)await updateDoc(doc(db,"menu",id),data);
-  else await addDoc(collection(db,"menu"),{...data,createdAt:serverTimestamp()});
-  resetMenuForm();show("menuNotice","खाना सफलतापूर्वक Save हो गया।");
- }catch(e){show("menuError",err(e))}
- finally{$("saveFoodBtn").disabled=false;$("saveFoodBtn").textContent=$("editId").value?"Update Food":"Save Food"}
+/* CATEGORIES */
+function renderCategories(snap){
+categoryRows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+$("categoryList").replaceChildren();
+$("categoryOptions").replaceChildren();
+
+for(const c of categoryRows){
+const op=document.createElement("option");op.value=c.name||"";$("categoryOptions").append(op);
+const box=document.createElement("div");box.className="food";
+const name=document.createElement("strong");name.textContent=c.name||"Unnamed";
+const edit=document.createElement("button");edit.textContent="Rename";edit.style.marginLeft="10px";
+edit.onclick=async()=>{
+const n=prompt("नई Category का नाम",c.name||"");
+if(!n||!n.trim()||n.trim()===c.name)return;
+try{
+const batch=writeBatch(db);
+batch.update(doc(db,"categories",c.id),{name:n.trim(),updatedAt:serverTimestamp()});
+menuRows.filter(m=>m.category===c.name).forEach(m=>batch.update(doc(db,"menu",m.id),{category:n.trim(),updatedAt:serverTimestamp()}));
+await batch.commit();
+}catch(e){show("categoryError",err(e));}
+};
+const del=document.createElement("button");del.className="danger";del.textContent="Delete";del.style.marginLeft="7px";
+del.onclick=async()=>{
+if(menuRows.some(m=>m.category===c.name)){show("categoryError","पहले इस Category के सभी खाने दूसरी Category में बदलें।");return;}
+if(confirm("Category delete करें?")){
+try{await deleteDoc(doc(db,"categories",c.id));}
+catch(e){show("categoryError",err(e));}
+}
+};
+box.append(name,edit,del);$("categoryList").append(box);
+}
+}
+function startCategories(){
+if(stopCategories)stopCategories();
+stopCategories=onSnapshot(collection(db,"categories"),renderCategories,e=>show("categoryError",err(e)));
+}
+$("categoryForm").addEventListener("submit",async e=>{
+e.preventDefault();hide("categoryError");hide("categoryMessage");
+const n=$("categoryName").value.trim();
+if(categoryRows.some(c=>(c.name||"").toLowerCase()===n.toLowerCase())){
+show("categoryError","यह Category पहले से मौजूद है।");return;
+}
+try{
+await addDoc(collection(db,"categories"),{name:n,createdAt:serverTimestamp()});
+$("categoryForm").reset();show("categoryMessage","Category जोड़ दी गई।","success");
+}catch(x){show("categoryError",err(x));}
+});
+
+/* DISCOUNT OFFERS */
+function renderOfferChoices(){
+const root=$("offerItems");root.replaceChildren();
+if(!menuRows.length){root.textContent="पहले Menu में खाना जोड़ें।";return;}
+for(const f of menuRows){
+const lab=document.createElement("label");
+lab.style.display="flex";lab.style.alignItems="center";lab.style.gap="9px";lab.style.margin="8px 0";
+const cb=document.createElement("input");cb.type="checkbox";cb.value=f.id;cb.style.width="auto";cb.style.margin="0";
+const text=document.createElement("span");
+text.textContent=(f.name||"Food")+" — ₹"+(f.price??0)+(Number(f.discountPercent)>0?" (मौजूदा छूट "+f.discountPercent+"%)":"");
+lab.append(cb,text);root.append(lab);
+}
+}
+
+function renderOffers(){
+const root=$("activeOffers");root.replaceChildren();
+const offered=menuRows.filter(f=>Number(f.discountPercent)>0);
+if(!offered.length){root.innerHTML='<div class="panel empty">कोई Offer लागू नहीं है।</div>';return;}
+for(const f of offered){
+const c=document.createElement("div");c.className="food";
+const p=document.createElement("strong");p.textContent=f.name+" — "+f.discountPercent+"% OFF";
+const d=document.createElement("div");d.className="muted";
+d.textContent="शुरू: "+(dateText(f.offerStartAt)||"तुरंत")+" | खत्म: "+(dateText(f.offerEndAt)||"मैन्युअल हटाने तक");
+const b=document.createElement("button");b.className="danger";b.textContent="Offer हटाएँ";
+b.onclick=async()=>{
+if(!confirm(f.name+" का Offer हटाएँ?"))return;
+try{
+await updateDoc(doc(db,"menu",f.id),{
+discountPercent:0,offerStartAt:null,offerEndAt:null,updatedAt:serverTimestamp()
+});
+}catch(e){show("offerError",err(e));}
+};
+c.append(p,d,b);root.append(c);
+}
+}
+
+$("offerForm").addEventListener("submit",async e=>{
+e.preventDefault();hide("offerError");hide("offerMessage");
+const ids=[...$("offerItems").querySelectorAll("input:checked")].map(x=>x.value);
+const pct=Number($("discountPercent").value);
+const start=new Date($("offerStartAt").value);
+const end=$("offerEndAt").value?new Date($("offerEndAt").value):null;
+if(!ids.length){show("offerError","कम से कम एक खाना चुनें।");return;}
+if(!(pct>0&&pct<100)){show("offerError","Discount 1 से 99 के बीच रखें।");return;}
+if(isNaN(start.getTime())||(end&&!(end>start))){show("offerError","Offer की तारीख/समय सही डालें।");return;}
+const b=$("offerSaveBtn");b.disabled=true;
+try{
+const batch=writeBatch(db);
+ids.forEach(id=>{
+batch.update(doc(db,"menu",id),{
+discountPercent:pct,
+offerStartAt:Timestamp.fromDate(start),
+offerEndAt:end?Timestamp.fromDate(end):null,
+updatedAt:serverTimestamp()
+});
+});
+await batch.commit();
+show("offerMessage",ids.length+" खाने पर "+pct+"% Offer सेव हो गया।","success");
+$("offerForm").reset();
+}catch(x){show("offerError",err(x));}
+finally{b.disabled=false;}
 });
 
 /* SETTINGS */
+function renderSettings(s){
+$("deliveryCharge").value=s.deliveryCharge??0;
+$("codEnabled").checked=s.codEnabled!==false;
+$("onlineEnabled").checked=s.onlineEnabled===true;
+$("upiId").value=s.upiId||"";
+}
 async function loadSettings(){
- try{
-  const snap=await getDoc(doc(db,"settings","app"));
-  if(snap.exists()){
-   const s=snap.data();
-   $("deliveryCharge").value=s.deliveryCharge??0;
-  }else $("deliveryCharge").value=0;
-  settingsLoaded=true;
- }catch(e){show("settingsError",err(e))}
+try{
+const s=await getDoc(doc(db,"settings","app"));
+renderSettings(s.exists()?s.data():{});
+}catch(e){show("settingsError",err(e));}
 }
-$("saveSettingsBtn").onclick=async()=>{
- hide("settingsError");hide("settingsNotice");
- const value=Number($("deliveryCharge").value);
- if(!Number.isFinite(value)||value<0){show("settingsError","Delivery Charge सही भरें।");return}
- $("saveSettingsBtn").disabled=true;
- try{
-  await setDoc(doc(db,"settings","app"),{deliveryCharge:value,updatedAt:serverTimestamp()},{merge:true});
-  show("settingsNotice","Delivery Charge Save हो गया।");
- }catch(e){show("settingsError",err(e))}
- finally{$("saveSettingsBtn").disabled=false}
-};
+$("settingsForm").addEventListener("submit",async e=>{
+e.preventDefault();hide("settingsError");hide("settingsMessage");
+const b=$("settingsSaveBtn");b.disabled=true;
+try{
+const charge=Number($("deliveryCharge").value);
+if(!Number.isFinite(charge)||charge<0)throw Error("Delivery Charge सही डालें।");
+if($("onlineEnabled").checked&&!$("upiId").value.trim())throw Error("Online Payment चालू करने के लिए UPI ID डालें।");
+await setDoc(doc(db,"settings","app"),{
+deliveryCharge:charge,
+codEnabled:$("codEnabled").checked,
+onlineEnabled:$("onlineEnabled").checked,
+upiId:$("upiId").value.trim(),
+updatedAt:serverTimestamp()
+},{merge:true});
+show("settingsMessage","Settings सेव हो गईं।","success");
+}catch(x){show("settingsError",err(x));}
+finally{b.disabled=false;}
+});
 
-/* OFFERS */
-function renderOfferFoods(){
- const root=$("offerFoodList");root.replaceChildren();
- if(!menuItems.length){root.textContent="पहले Menu में खाना जोड़ें।";return}
- menuItems.forEach(f=>{
-  const row=document.createElement("div");row.className="checkrow";
-  const cb=document.createElement("input");cb.type="checkbox";cb.value=f.id;cb.id="offer_"+f.id;
-  const label=document.createElement("label");label.htmlFor=cb.id;
-  label.textContent=(f.name||"Food")+" — ₹"+(f.price||0);
-  row.append(cb,label);root.append(row);
- });
-}
-function selectedOfferIds(){
- return [...$("offerFoodList").querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
-}
-$("applyOfferBtn").onclick=async()=>{
- hide("offerError");hide("offerNotice");
- const ids=selectedOfferIds();
- const percent=Number($("discountPercent").value);
- if(!ids.length){show("offerError","कम से कम एक खाना चुनें।");return}
- if(!Number.isFinite(percent)||percent<=0||percent>100){show("offerError","Discount 1 से 100 के बीच रखें।");return}
- const startVal=$("offerStart").value;
- const endVal=$("offerEnd").value;
- if(!startVal){show("offerError","Offer शुरू होने का समय चुनें।");return}
- const startDate=new Date(startVal);
- const endDate=endVal?new Date(endVal):null;
- if(isNaN(startDate.getTime())){show("offerError","Start date सही नहीं है।");return}
- if(endDate&&(!Number.isFinite(endDate.getTime())||endDate<=startDate)){show("offerError","End time, Start time के बाद होना चाहिए।");return}
- $("applyOfferBtn").disabled=true;
- try{
-  await Promise.all(ids.map(id=>updateDoc(doc(db,"menu",id),{
-   discountPercent:percent,
-   offerStartAt:Timestamp.fromDate(startDate),
-   offerEndAt:endDate?Timestamp.fromDate(endDate):null,
-   updatedAt:serverTimestamp()
-  })));
-  show("offerNotice","चुने हुए खाने पर Offer Save हो गया। Customer App में Countdown और Discount दिखाने के लिए Customer App को भी अपडेट करना होगा।");
- }catch(e){show("offerError",err(e))}
- finally{$("applyOfferBtn").disabled=false}
-};
-$("removeOfferBtn").onclick=async()=>{
- hide("offerError");hide("offerNotice");
- const ids=selectedOfferIds();
- if(!ids.length){show("offerError","पहले खाना चुनें।");return}
- $("removeOfferBtn").disabled=true;
- try{
-  await Promise.all(ids.map(id=>updateDoc(doc(db,"menu",id),{
-   discountPercent:0,offerStartAt:null,offerEndAt:null,updatedAt:serverTimestamp()
-  })));
-  show("offerNotice","चुने हुए खाने से Offer हटा दिया गया।");
- }catch(e){show("offerError",err(e))}
- finally{$("removeOfferBtn").disabled=false}
-};
+$("refreshBtn").onclick=startOrders;
 
-/* AUTH */
 onAuthStateChanged(auth,user=>{
- if(!user){showLogin();return}
- if(user.uid!==ADMIN_UID){
-  showLogin();show("loginError","यह Admin Account नहीं है। UID: "+user.uid);
-  signOut(auth).catch(()=>{});return;
- }
- hide("loginError");showDashboard();
- startOrders();startMenu();loadSettings();
+if(!user){stopAll();loginView();return;}
+if(user.uid!==ADMIN_UID){
+stopAll();loginView();show("loginError","यह Email Admin UID से मेल नहीं खाता।");
+signOut(auth).catch(()=>{});return;
+}
+hide("loginError");dashboardView();
+startOrders();startMenu();startCategories();loadSettings();
 });
 </script>
 </body>
