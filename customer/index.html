@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <title>Bite Express — Shahpura</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="Bite Express" class="logo" onerror="this.style.display='none'">
+      <div><strong>Bite Express</strong><small>Shahpura • Fast Food</small></div>
+    </div>
+    <button class="cart-icon" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>भूख लगी है? 😋</h1>
+      <p>अपना पसंदीदा खाना चुनिए और ऑर्डर कीजिए।</p>
+      <input id="search" type="search" placeholder="खाना खोजें…">
+    </section>
+
+    <section>
+      <h2>Categories</h2>
+      <div class="chips" id="categoryChips"><button class="active" onclick="filterFood('all')">All</button></div>
+    </section>
+
+    <section>
+      <div class="section-title"><h2>Popular Food</h2><span>आपकी रेट</span></div>
+      <div id="foodGrid" class="grid"></div>
+    </section>
+  </main>
+
+  <div id="cartPanel" class="overlay hidden">
+    <div class="sheet">
+      <div class="sheet-head"><h2>🛒 आपका Cart</h2><button onclick="closeCart()">✕</button></div>
+      <div id="cartItems"></div>
+      <div class="bill">
+        <div><span>Items Total</span><strong id="itemTotal">₹0</strong></div>
+        <div><span>Delivery</span><strong id="delivery">₹0</strong></div>
+        <div class="grand"><span>Total</span><strong id="grandTotal">₹0</strong></div>
+      </div>
+      <button class="primary" onclick="showCheckout()">Checkout</button>
+    </div>
+  </div>
+
+  <div id="checkoutPanel" class="overlay hidden">
+    <div class="sheet">
+      <div class="sheet-head"><h2>📍 Delivery Details</h2><button onclick="closeCheckout()">✕</button></div>
+      <form id="orderForm">
+        <label>नाम<input id="name" required placeholder="आपका नाम"></label>
+        <label>मोबाइल नंबर<input id="phone" required inputmode="numeric" pattern="[0-9]{10}" placeholder="10 अंकों का नंबर"></label>
+        <label>पूरा पता<textarea id="address" required placeholder="घर नंबर, मोहल्ला, Shahpura"></textarea></label>
+        <div class="payment-box" id="paymentOptions"><strong>Payment Method</strong><div id="paymentChoices"></div><div id="upiArea" hidden><p>पहले UPI ऐप से भुगतान करें, फिर Transaction ID / UTR डालें।</p><button type="button" class="primary" id="upiPayBtn">UPI App खोलें</button><input id="upiReference" placeholder="UPI Transaction ID / UTR"></div></div>
+        <button class="primary" type="submit">Order Place करें</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="successPanel" class="overlay hidden">
+    <div class="sheet success">
+      <div class="success-icon">✓</div>
+      <h2>Order Received!</h2>
+      <p>आपका ऑर्डर Bite Express को मिल गया है।</p>
+      <p class="order-id" id="orderId"></p>
+      <p class="order-id" id="firebaseDocId"></p>
+      <button class="primary" onclick="closeSuccess()">Home पर जाएँ</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
