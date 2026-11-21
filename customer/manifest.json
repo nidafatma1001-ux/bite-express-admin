@@ -1,0 +1,20 @@
+
+{
+  "name": "BITE EXPRESS - Shahpura",
+  "short_name": "BITE EXPRESS",
+  "description": "Shahpura Fast Food Ordering App",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "icons": [
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
