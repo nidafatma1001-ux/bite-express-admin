@@ -63,3 +63,22 @@ textarea{min-height:90px;resize:vertical}
 .payment-choice{display:flex;align-items:center;gap:8px;padding:8px 0}
 .payment-choice input{width:auto}
 .payment-box input{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-top:8px}
+
+/* CATEGORY PHOTOS */
+.chips button{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.category-img{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  object-fit:cover;
+  flex-shrink:0;
+}
+
+/* INSTALL BUTTON */
+.header-actions{display:flex;align-items:center;gap:7px}
+.install-btn{background:#ffd21a;color:#111;border:0;border-radius:12px;padding:10px 11px;font-size:13px;font-weight:800;white-space:nowrap}
