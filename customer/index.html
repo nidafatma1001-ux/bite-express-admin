@@ -19,6 +19,7 @@
     </div>
     <div class="header-actions">
       <button id="installAppBtn" class="install-btn" onclick="installBiteExpress()">📲 Install</button>
+      <button class="orders-btn" onclick="openMyOrders()">📦 My Orders</button>
       <button class="cart-icon" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
     </div>
   </header>
@@ -40,6 +41,18 @@
       <div id="foodGrid" class="grid"></div>
     </section>
   </main>
+
+  <div id="myOrdersPanel" class="overlay hidden">
+    <div class="sheet">
+      <div class="sheet-head">
+        <h2>📦 मेरे ऑर्डर</h2>
+        <button onclick="closeMyOrders()">✕</button>
+      </div>
+      <div id="myOrdersList">
+        <div class="empty">आपके ऑर्डर लोड हो रहे हैं...</div>
+      </div>
+    </div>
+  </div>
 
   <div id="cartPanel" class="overlay hidden">
     <div class="sheet">
@@ -83,6 +96,7 @@
       <p class="order-id" id="orderId"></p>
       <p class="order-id" id="firebaseDocId"></p>
       <button class="primary" onclick="closeSuccess()">Home पर जाएँ</button>
+      <button class="primary" onclick="closeSuccess();openMyOrders()">📦 अपना ऑर्डर देखें</button>
     </div>
   </div>
 
