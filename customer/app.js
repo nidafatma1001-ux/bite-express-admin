@@ -1,6 +1,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, getDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, getDoc, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDAY0UCPHBSetl8D1VJiQ3NqrTVNVzt8hU",
@@ -14,9 +15,48 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 const $ = id => document.getElementById(id);
 
-let foods = [], categories = [], settings = { deliveryCharge: 0, codEnabled: true, onlineEnabled: false, upiId: "" };
+let customerUid = null;
+let myOrdersUnsubscribe = null;
+
+const authReady = new Promise((resolve, reject) => {
+  let signInStarted = false;
+  let finished = false;
+
+  const unsubscribe = onAuthStateChanged(auth, async user => {
+    if (finished) return;
+
+    if (user) {
+      finished = true;
+      customerUid = user.uid;
+      unsubscribe();
+      resolve(user.uid);
+      return;
+    }
+
+    if (signInStarted) return;
+    signInStarted = true;
+
+    try {
+      const result = await signInAnonymously(auth);
+      if (!finished) {
+        finished = true;
+        customerUid = result.user.uid;
+        unsubscribe();
+        resolve(result.user.uid);
+      }
+    } catch (error) {
+      finished = true;
+      unsubscribe();
+      reject(error);
+    }
+  });
+});
+
+let foods = [], categories = [];
+let settings = { deliveryCharge: 0, codEnabled: true, onlineEnabled: false, upiId: "" };
 let cart = JSON.parse(localStorage.getItem("bite_cart") || "[]");
 let currentFilter = "all", selectedPayment = "COD", tick = null;
 
@@ -43,8 +83,7 @@ function timeMinutes(v){
 function formatTime12(v){
   const mins=timeMinutes(v);
   if(mins===null)return v;
-  const h=Math.floor(mins/60);
-  const m=mins%60;
+  const h=Math.floor(mins/60),m=mins%60;
   const period=h>=12?"PM":"AM";
   const hour=h%12||12;
   return `${hour}:${String(m).padStart(2,"0")} ${period}`;
@@ -79,11 +118,9 @@ function effectivePrice(f){
   return p;
 }
 
-/* CATEGORY PHOTOS */
 function renderCategories(){
   const root=$("categoryChips");
   if(!root)return;
-
   root.replaceChildren();
 
   const icons={
@@ -108,16 +145,15 @@ function renderCategories(){
   for(const name of names){
     const b=document.createElement("button");
     b.className=currentFilter===name?"active":"";
-
-    const img=document.createElement("img");
-    img.className="category-img";
-    img.src=icons[name]||"";
-    img.alt="";
-    img.loading="lazy";
-
-    if(icons[name])b.append(img);
+    if(icons[name]){
+      const img=document.createElement("img");
+      img.className="category-img";
+      img.src=icons[name];
+      img.alt="";
+      img.loading="lazy";
+      b.append(img);
+    }
     b.append(document.createTextNode(name));
-
     b.onclick=()=>filterFood(name);
     root.append(b);
   }
@@ -329,56 +365,155 @@ $("upiPayBtn").addEventListener("click",()=>{
 async function placeOrder(e){
   e.preventDefault();
 
-  const t=totals(),id="BX"+Date.now().toString().slice(-8);
-
-  if(selectedPayment==="UPI"){
-    if(!settings.upiId){
-      alert("Admin ने अभी UPI ID सेट नहीं की है।");
-      return;
-    }
-    const ref=$("upiReference").value.trim();
-    if(!ref){
-      alert("UPI Payment करने के बाद Transaction ID / UTR डालें।");
-      return;
-    }
-    if(!confirm("क्या आपने UPI से ₹"+t.total+" भुगतान कर दिया है और सही UTR दर्ज किया है?"))return;
-  }
-
-  for(const c of cart){
-    const current=findFood(c.id);
-    if(current&&!availability(current).ok){
-      alert(`${current.name} अभी उपलब्ध नहीं है। Cart से हटाकर फिर ऑर्डर करें।`);
-      return;
-    }
-  }
-
-  const order={
-    id,
-    name:$("name").value.trim(),
-    phone:$("phone").value.trim(),
-    address:$("address").value.trim(),
-    items:cart.map(x=>({id:String(x.id),name:x.name,category:x.category||"",price:Number(x.price),quantity:x.qty})),
-    total:t.total,
-    status:"New",
-    createdAt:serverTimestamp(),
-    paymentMethod:selectedPayment,
-    paymentStatus:selectedPayment==="COD"?"Pay on delivery":"UTR submitted",
-    paymentReference:selectedPayment==="UPI"?$("upiReference").value.trim():""
-  };
+  const submitButton=$("orderForm").querySelector("button[type=submit]");
+  submitButton.disabled=true;
 
   try{
+    await authReady;
+
+    const t=totals(),id="BX"+Date.now().toString().slice(-8);
+
+    if(selectedPayment==="UPI"){
+      if(!settings.upiId){
+        alert("Admin ने अभी UPI ID सेट नहीं की है।");
+        return;
+      }
+      const ref=$("upiReference").value.trim();
+      if(!ref){
+        alert("UPI Payment करने के बाद Transaction ID / UTR डालें।");
+        return;
+      }
+      if(!confirm("क्या आपने UPI से ₹"+t.total+" भुगतान कर दिया है और सही UTR दर्ज किया है?"))return;
+    }
+
+    for(const c of cart){
+      const current=findFood(c.id);
+      if(current&&!availability(current).ok){
+        alert(`${current.name} अभी उपलब्ध नहीं है। Cart से हटाकर फिर ऑर्डर करें।`);
+        return;
+      }
+    }
+
+    const order={
+      id,
+      customerUid,
+      name:$("name").value.trim(),
+      phone:$("phone").value.trim(),
+      address:$("address").value.trim(),
+      items:cart.map(x=>({id:String(x.id),name:x.name,category:x.category||"",price:Number(x.price),quantity:x.qty})),
+      total:t.total,
+      status:"New",
+      createdAt:serverTimestamp(),
+      paymentMethod:selectedPayment,
+      paymentStatus:selectedPayment==="COD"?"Pay on delivery":"UTR submitted",
+      paymentReference:selectedPayment==="UPI"?$("upiReference").value.trim():""
+    };
+
     const ref=await addDoc(collection(db,"orders"),order);
     localStorage.setItem("bite_last_order",JSON.stringify({...order,createdAt:new Date().toISOString()}));
+
     cart=[];
     saveCart();
     closeCheckout();
     $("orderId").textContent="Order ID: "+id;
-    $("firebaseDocId").textContent="Firebase Document ID: "+ref.id;
+    $("firebaseDocId").textContent="";
     $("successPanel").classList.remove("hidden");
+    openMyOrders();
+
   }catch(err){
     console.error(err);
     alert("ऑर्डर नहीं हो पाया। Internet/Firebase Rules जाँचें: "+(err.code||err.message));
+  }finally{
+    submitButton.disabled=false;
   }
+}
+
+/* MY ORDERS */
+function statusText(status){
+  const labels={
+    New:"नया ऑर्डर मिला",
+    Accepted:"ऑर्डर स्वीकार हो गया",
+    Preparing:"खाना तैयार हो रहा है",
+    "Out for Delivery":"डिलीवरी के लिए निकल गया",
+    Delivered:"ऑर्डर डिलीवर हो गया",
+    Cancelled:"ऑर्डर रद्द हो गया"
+  };
+  return labels[status]||status||"Status उपलब्ध नहीं";
+}
+
+function renderMyOrders(snapshot){
+  const root=$("myOrdersList");
+  if(!root)return;
+
+  if(snapshot.empty){
+    root.innerHTML='<div class="empty">अभी आपका कोई ऑर्डर नहीं है।</div>';
+    return;
+  }
+
+  const orders=snapshot.docs.map(d=>({docId:d.id,...d.data()}));
+  orders.sort((a,b)=>{
+    const ta=a.createdAt?.toMillis?a.createdAt.toMillis():0;
+    const tb=b.createdAt?.toMillis?b.createdAt.toMillis():0;
+    return tb-ta;
+  });
+
+  root.replaceChildren();
+
+  for(const order of orders){
+    const card=document.createElement("div");
+    card.className="my-order-card";
+
+    const heading=document.createElement("div");
+    heading.className="my-order-heading";
+
+    const orderNo=document.createElement("strong");
+    orderNo.textContent="Order ID: "+(order.id||order.docId);
+
+    const status=document.createElement("span");
+    status.className="my-order-status "+(order.status==="Cancelled"?"cancelled":order.status==="Delivered"?"delivered":"");
+    status.textContent=statusText(order.status);
+
+    heading.append(orderNo,status);
+
+    const items=document.createElement("div");
+    items.className="my-order-items";
+    items.textContent=(order.items||[]).map(item=>`${item.name} × ${item.quantity}`).join(", ");
+
+    const amount=document.createElement("div");
+    amount.className="my-order-total";
+    amount.textContent="कुल राशि: ₹"+(order.total||0);
+
+    const payment=document.createElement("div");
+    payment.className="my-order-payment";
+    payment.textContent="Payment: "+(order.paymentMethod||"COD");
+
+    card.append(heading,items,amount,payment);
+    root.append(card);
+  }
+}
+
+async function openMyOrders(){
+  $("myOrdersPanel").classList.remove("hidden");
+  $("myOrdersList").innerHTML='<div class="empty">आपके ऑर्डर लोड हो रहे हैं...</div>';
+
+  try{
+    await authReady;
+
+    if(myOrdersUnsubscribe)myOrdersUnsubscribe();
+
+    const q=query(collection(db,"orders"),where("customerUid","==",customerUid));
+    myOrdersUnsubscribe=onSnapshot(q,renderMyOrders,error=>{
+      console.error(error);
+      $("myOrdersList").innerHTML='<div class="empty">ऑर्डर लोड नहीं हुए। Internet या Firebase Rules जाँचें।</div>';
+    });
+  }catch(error){
+    console.error(error);
+    $("myOrdersList").innerHTML='<div class="empty">ग्राहक की पहचान नहीं बन पाई। कृपया ऐप दोबारा खोलें।</div>';
+  }
+}
+
+function closeMyOrders(){
+  $("myOrdersPanel").classList.add("hidden");
 }
 
 window.filterFood=filterFood;
@@ -389,6 +524,8 @@ window.closeCart=closeCart;
 window.showCheckout=showCheckout;
 window.closeCheckout=closeCheckout;
 window.closeSuccess=closeSuccess;
+window.openMyOrders=openMyOrders;
+window.closeMyOrders=closeMyOrders;
 
 $("search").addEventListener("input",renderFoods);
 $("orderForm").addEventListener("submit",placeOrder);
