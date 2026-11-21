@@ -24,8 +24,9 @@ let myOrdersUnsubscribe = null;
 const authReady = new Promise((resolve, reject) => {
   let signInStarted = false;
   let finished = false;
+  let unsubscribe = () => {};
 
-  const unsubscribe = onAuthStateChanged(auth, async user => {
+  unsubscribe = onAuthStateChanged(auth, async user => {
     if (finished) return;
 
     if (user) {
@@ -409,7 +410,7 @@ async function placeOrder(e){
       paymentReference:selectedPayment==="UPI"?$("upiReference").value.trim():""
     };
 
-    const ref=await addDoc(collection(db,"orders"),order);
+    await addDoc(collection(db,"orders"),order);
     localStorage.setItem("bite_last_order",JSON.stringify({...order,createdAt:new Date().toISOString()}));
 
     cart=[];
@@ -418,7 +419,6 @@ async function placeOrder(e){
     $("orderId").textContent="Order ID: "+id;
     $("firebaseDocId").textContent="";
     $("successPanel").classList.remove("hidden");
-    openMyOrders();
 
   }catch(err){
     console.error(err);
