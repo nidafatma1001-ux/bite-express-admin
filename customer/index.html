@@ -1,76 +1,67 @@
-<!doctype html>
-<html lang="hi">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#111111">
-  <title>Bite Express — Shahpura</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <img src="assets/logo.png" alt="Bite Express" class="logo" onerror="this.style.display='none'">
-      <div><strong>Bite Express</strong><small>Shahpura • Fast Food</small></div>
-    </div>
-    <button class="cart-icon" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
-  </header>
 
-  <main>
-    <section class="hero">
-      <h1>भूख लगी है? 😋</h1>
-      <p>अपना पसंदीदा खाना चुनिए और ऑर्डर कीजिए।</p>
-      <input id="search" type="search" placeholder="खाना खोजें…">
-    </section>
-
-    <section>
-      <h2>Categories</h2>
-      <div class="chips" id="categoryChips"><button class="active" onclick="filterFood('all')">All</button></div>
-    </section>
-
-    <section>
-      <div class="section-title"><h2>Popular Food</h2><span>आपकी रेट</span></div>
-      <div id="foodGrid" class="grid"></div>
-    </section>
-  </main>
-
-  <div id="cartPanel" class="overlay hidden">
-    <div class="sheet">
-      <div class="sheet-head"><h2>🛒 आपका Cart</h2><button onclick="closeCart()">✕</button></div>
-      <div id="cartItems"></div>
-      <div class="bill">
-        <div><span>Items Total</span><strong id="itemTotal">₹0</strong></div>
-        <div><span>Delivery</span><strong id="delivery">₹0</strong></div>
-        <div class="grand"><span>Total</span><strong id="grandTotal">₹0</strong></div>
-      </div>
-      <button class="primary" onclick="showCheckout()">Checkout</button>
-    </div>
-  </div>
-
-  <div id="checkoutPanel" class="overlay hidden">
-    <div class="sheet">
-      <div class="sheet-head"><h2>📍 Delivery Details</h2><button onclick="closeCheckout()">✕</button></div>
-      <form id="orderForm">
-        <label>नाम<input id="name" required placeholder="आपका नाम"></label>
-        <label>मोबाइल नंबर<input id="phone" required inputmode="numeric" pattern="[0-9]{10}" placeholder="10 अंकों का नंबर"></label>
-        <label>पूरा पता<textarea id="address" required placeholder="घर नंबर, मोहल्ला, Shahpura"></textarea></label>
-        <div class="payment-box" id="paymentOptions"><strong>Payment Method</strong><div id="paymentChoices"></div><div id="upiArea" hidden><p>पहले UPI ऐप से भुगतान करें, फिर Transaction ID / UTR डालें।</p><button type="button" class="primary" id="upiPayBtn">UPI App खोलें</button><input id="upiReference" placeholder="UPI Transaction ID / UTR"></div></div>
-        <button class="primary" type="submit">Order Place करें</button>
-      </form>
-    </div>
-  </div>
-
-  <div id="successPanel" class="overlay hidden">
-    <div class="sheet success">
-      <div class="success-icon">✓</div>
-      <h2>Order Received!</h2>
-      <p>आपका ऑर्डर Bite Express को मिल गया है।</p>
-      <p class="order-id" id="orderId"></p>
-      <p class="order-id" id="firebaseDocId"></p>
-      <button class="primary" onclick="closeSuccess()">Home पर जाएँ</button>
-    </div>
-  </div>
-
-  <script type="module" src="app.js"></script>
-</body>
-</html>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f7f7f7;color:#151515;padding-bottom:30px}
+.topbar{position:sticky;top:0;z-index:5;background:#111;color:#fff;padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:9px}
+.logo{width:52px;height:52px;object-fit:cover;border-radius:12px}
+.brand strong{display:block;font-size:20px;color:#ffd21a}
+.brand small{display:block;color:#ddd;font-size:11px}
+.header-actions{display:flex;align-items:center;gap:7px}
+.install-btn{background:#ffd21a;color:#111;border:0;border-radius:12px;padding:10px 11px;font-size:13px;font-weight:800;white-space:nowrap}
+.cart-icon{background:#ffd21a;border:0;border-radius:14px;padding:10px 13px;font-size:17px;font-weight:700}
+.hero{background:linear-gradient(135deg,#111,#2b2b2b);color:#fff;padding:25px 16px 22px;border-bottom:5px solid #ffd21a}
+.hero h1{margin:0 0 7px;font-size:28px}
+.hero p{margin:0 0 16px;color:#ddd}
+.hero input{width:100%;border:0;border-radius:14px;padding:15px;font-size:16px}
+.hero input:focus{outline:3px solid #ffd21a}
+main{max-width:900px;margin:auto;padding:0 14px}
+h2{font-size:20px;margin:20px 0 12px}
+.chips{display:flex;gap:8px;overflow:auto;padding-bottom:4px}
+.chips button{white-space:nowrap;border:1px solid #ddd;background:#fff;border-radius:20px;padding:9px 13px;flex:0 0 auto}
+.chips button.active{background:#ffd21a;border-color:#ffd21a}
+.section-title{display:flex;justify-content:space-between;align-items:center}
+.section-title span{font-size:12px;color:#777}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 3px 12px #00000012}
+.food-img{height:145px;width:100%;object-fit:cover;background:#eee}
+.card-body{padding:11px}
+.card h3{margin:0 0 5px;font-size:17px}
+.price{font-weight:800;font-size:18px}
+.add{float:right;border:0;background:#ffd21a;border-radius:10px;padding:8px 12px;font-weight:800}
+.overlay{position:fixed;inset:0;background:#0008;z-index:20;display:flex;align-items:flex-end}
+.hidden{display:none}
+.sheet{background:#fff;width:100%;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center}
+.sheet-head h2{margin:0}
+.sheet-head button{border:0;background:#eee;border-radius:50%;width:38px;height:38px}
+.cart-row{display:flex;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:12px 0}
+.cart-row img{width:65px;height:55px;object-fit:cover;border-radius:10px}
+.cart-row .grow{flex:1}
+.qty button{border:0;background:#eee;border-radius:8px;padding:5px 9px}
+.bill{margin:15px 0}
+.bill div{display:flex;justify-content:space-between;padding:6px 0}
+.grand{font-size:20px;border-top:1px solid #ddd;margin-top:5px;padding-top:12px!important}
+.primary{width:100%;border:0;background:#ffd21a;color:#111;padding:15px;border-radius:13px;font-size:17px;font-weight:800;margin-top:10px}
+label{display:block;font-weight:700;margin:12px 0}
+label input,label textarea{display:block;width:100%;margin-top:7px;padding:13px;border:1px solid #ddd;border-radius:11px;font-size:16px}
+textarea{min-height:90px;resize:vertical}
+.payment-box{background:#fff8cf;border:1px solid #f0d447;border-radius:12px;padding:12px;margin:15px 0}
+.payment-box p{margin:5px 0 0;color:#555;font-size:13px}
+.success{text-align:center;padding:35px 18px}
+.success-icon{width:70px;height:70px;margin:auto;border-radius:50%;background:#18b45b;color:#fff;font-size:45px;line-height:70px}
+.order-id{font-weight:800;color:#e22}
+.empty{text-align:center;color:#777;padding:30px}
+@media(min-width:650px){
+.grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sheet{max-width:560px;margin:0 auto;border-radius:22px;margin-bottom:20px}
+.overlay{align-items:center;padding:20px}
+}
+.food-time{display:block;font-size:11px;color:#666;margin-top:5px;clear:both}
+.food-state{display:block;font-size:12px;font-weight:700;margin-top:4px}
+.food-state.open{color:#15803d}
+.food-state.closed{color:#b91c1c}
+.food-state.soon{color:#a16207}
+.discount-line{font-size:12px;color:#b91c1c;margin-top:4px}
+.payment-choice{display:flex;align-items:center;gap:8px;padding:8px 0}
+.payment-choice input{width:auto}
+.payment-box input{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;margin-top:8px}
