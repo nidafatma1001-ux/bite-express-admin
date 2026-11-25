@@ -1,6 +1,6 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, getDoc, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, addDoc, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -17,6 +17,92 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const $ = id => document.getElementById(id);
+
+// BITE EXPRESS DELIVERY AREA
+const CENTER_LAT = 25.625833;
+const CENTER_LNG = 74.924563;
+const DELIVERY_RADIUS_KM = 3.8;
+
+let customerLocation = null;
+
+function distanceKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const rad = n => n * Math.PI / 180;
+  const dLat = rad(lat2 - lat1);
+  const dLon = rad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(lat1)) *
+    Math.cos(rad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function getCustomerLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("आपके मोबाइल में Location सुविधा उपलब्ध नहीं है।"));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => resolve({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy
+      }),
+      error => {
+        let message = "आपकी लोकेशन नहीं मिल पाई।";
+        if (error.code === 1) message = "कृपया Location की अनुमति दें।";
+        if (error.code === 2) message = "मोबाइल की Location चालू करें।";
+        if (error.code === 3) message = "लोकेशन मिलने में समय लगा। दोबारा कोशिश करें।";
+        reject(new Error(message));
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+      }
+    );
+  });
+}
+
+async function checkDeliveryArea() {
+  try {
+    const loc = await getCustomerLocation();
+
+    const distance = distanceKm(
+      CENTER_LAT,
+      CENTER_LNG,
+      loc.latitude,
+      loc.longitude
+    );
+
+    if (distance > DELIVERY_RADIUS_KM) {
+      alert(
+        "माफ़ कीजिए! BITE EXPRESS अभी आपके इलाके में उपलब्ध नहीं है।\n\n" +
+        "आपकी दूरी: " + distance.toFixed(2) + " KM\n" +
+        "डिलीवरी सीमा: 3.8 KM"
+      );
+      return false;
+    }
+
+    customerLocation = {
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      accuracy: loc.accuracy,
+      distanceKm: Number(distance.toFixed(3))
+    };
+
+    return true;
+
+  } catch (error) {
+    alert(error.message + "\n\nकृपया मोबाइल की Location चालू करके फिर कोशिश करें।");
+    return false;
+  }
+}
 
 let customerUid = null;
 let myOrdersUnsubscribe = null;
@@ -294,11 +380,15 @@ function closeCart(){
   $("cartPanel").classList.add("hidden");
 }
 
-function showCheckout(){
+async function showCheckout(){
   if(!cart.length){
     alert("पहले कोई सामान Cart में डालें।");
     return;
   }
+
+  const inside = await checkDeliveryArea();
+  if(!inside)return;
+
   closeCart();
   renderPaymentOptions();
   $("checkoutPanel").classList.remove("hidden");
@@ -370,6 +460,10 @@ async function placeOrder(e){
   submitButton.disabled=true;
 
   try{
+    // ऑर्डर भेजने से पहले लोकेशन दोबारा जाँचें
+    const inside = await checkDeliveryArea();
+    if(!inside)return;
+
     await authReady;
 
     const t=totals(),id="BX"+Date.now().toString().slice(-8);
@@ -407,7 +501,8 @@ async function placeOrder(e){
       createdAt:serverTimestamp(),
       paymentMethod:selectedPayment,
       paymentStatus:selectedPayment==="COD"?"Pay on delivery":"UTR submitted",
-      paymentReference:selectedPayment==="UPI"?$("upiReference").value.trim():""
+      paymentReference:selectedPayment==="UPI"?$("upiReference").value.trim():"",
+      customerLocation:customerLocation
     };
 
     await addDoc(collection(db,"orders"),order);
