@@ -1,5 +1,6 @@
+
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -56,6 +57,8 @@ button:disabled{opacity:.55;cursor:wait}
 .foodactions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#ecfdf5;color:#065f46;font-size:12px}
 .pill.off{background:#fee2e2;color:#991b1b}
+.type-pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#ecfdf5;color:#166534;font-size:12px;margin:5px 4px 5px 0}
+.type-pill.nonveg{background:#fee2e2;color:#991b1b}
 .combo-choice{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:10px 0;background:#fafafa}
 .combo-choice-top{display:flex;align-items:center;gap:10px}
 .combo-choice-top input{width:20px;height:20px}
@@ -63,7 +66,7 @@ button:disabled{opacity:.55;cursor:wait}
 .combo-quantities{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
 .combo-quantities label{font-size:12px;margin:0 0 5px}
 .combo-quantities input{padding:9px}
-.combo-summary{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px;margin-top:12px;line-height:1.6}
+.combo-summary{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px;margin-top:12px;line-height:1.6;white-space:pre-line}
 @media(max-width:520px){
 .stats{grid-template-columns:1fr 1fr}
 .statusrow{flex-direction:column}
@@ -102,7 +105,7 @@ button:disabled{opacity:.55;cursor:wait}
 <div class="toolbar">
 <div>
 <h2 style="margin:0">Admin Dashboard</h2>
-<div class="muted">Orders, Menu, Offers और Settings</div>
+<div class="muted">Orders, Menu, Offers and Settings</div>
 </div>
 <button id="refreshBtn" class="dark">Refresh Orders</button>
 </div>
@@ -122,17 +125,17 @@ button:disabled{opacity:.55;cursor:wait}
 <div class="stat">Delivered<b id="deliveredCount">0</b></div>
 </div>
 <div id="ordersError" class="error"></div>
-<div id="ordersList"><div class="panel empty">ऑर्डर लोड हो रहे हैं...</div></div>
+<div id="ordersList"><div class="panel empty">Loading orders...</div></div>
 </section>
 
 <section id="menuTab" class="tabpage">
 <div class="panel">
-<h2 id="menuFormTitle">नया खाना जोड़ें</h2>
+<h2 id="menuFormTitle">Add New Food</h2>
 <form id="foodForm">
 <input id="foodId" type="hidden">
 <div class="formgrid">
 <div>
-<label for="foodName">खाने का नाम</label>
+<label for="foodName">Food Name</label>
 <input id="foodName" placeholder="Veg Burger" required>
 </div>
 <div>
@@ -141,7 +144,14 @@ button:disabled{opacity:.55;cursor:wait}
 <datalist id="categoryOptions"></datalist>
 </div>
 <div>
-<label for="foodPrice">कीमत (₹)</label>
+<label for="foodType">Food Type</label>
+<select id="foodType">
+<option value="veg">VEG</option>
+<option value="nonveg">NON-VEG</option>
+</select>
+</div>
+<div>
+<label for="foodPrice">Price (₹)</label>
 <input id="foodPrice" type="number" min="0" step="1" required>
 </div>
 <div>
@@ -152,37 +162,42 @@ button:disabled{opacity:.55;cursor:wait}
 </select>
 </div>
 <div>
-<label for="availableFrom">रोज शुरू होने का समय</label>
+<label for="availableFrom">Daily Start Time</label>
 <input id="availableFrom" type="time">
 </div>
 <div>
-<label for="availableTo">रोज बंद होने का समय</label>
+<label for="availableTo">Daily End Time</label>
 <input id="availableTo" type="time">
 </div>
 <div class="span2">
-<label for="foodImage">खाने की फोटो</label>
+<label for="foodImage">Food Photo</label>
 <input id="foodImage" type="file" accept="image/*">
-<div class="muted">Edit करते समय पुरानी फोटो रखने के लिए खाली छोड़ें।</div>
+<div class="muted">Leave empty while editing to keep the existing photo.</div>
 </div>
 </div>
-<button id="foodSaveBtn" class="full" type="submit">खाना Save करें</button>
-<button id="foodCancelBtn" class="full dark" type="button" style="display:none">Edit Cancel करें</button>
+<button id="foodSaveBtn" class="full" type="submit">Save Food</button>
+<button id="foodCancelBtn" class="full dark" type="button" style="display:none">Cancel Edit</button>
 </form>
 <div id="menuMessage" class="success"></div>
 <div id="menuError" class="error"></div>
 </div>
 
-<!-- COMBO FORM -->
 <div class="panel" style="margin-top:16px">
-<h2 id="comboFormTitle">नया Combo बनाएं</h2>
-<div class="muted">अपने Menu में से खाने चुनें और Combo की अलग कीमत तय करें।</div>
+<h2 id="comboFormTitle">Create New Combo</h2>
+<div class="muted">Choose food items from your menu and set a separate combo price.</div>
 <form id="comboForm">
 <input id="comboId" type="hidden">
 
-<label for="comboName">Combo का नाम</label>
-<input id="comboName" placeholder="जैसे Burger Chowmein Combo" required>
+<label for="comboName">Combo Name</label>
+<input id="comboName" placeholder="Burger Chowmein Combo" required>
 
-<label for="comboPrice">Combo की कीमत (₹)</label>
+<label for="comboFoodType">Combo Type</label>
+<select id="comboFoodType">
+<option value="veg">VEG</option>
+<option value="nonveg">NON-VEG</option>
+</select>
+
+<label for="comboPrice">Combo Price (₹)</label>
 <input id="comboPrice" type="number" min="0" step="1" placeholder="199" required>
 
 <label for="comboAvailable">Combo Availability</label>
@@ -191,26 +206,26 @@ button:disabled{opacity:.55;cursor:wait}
 <option value="false">Out of Stock</option>
 </select>
 
-<label for="comboImage">Combo की फोटो (वैकल्पिक)</label>
+<label for="comboImage">Combo Photo (Optional)</label>
 <input id="comboImage" type="file" accept="image/*">
-<div class="muted">फोटो नहीं चुनने पर Combo बिना नई फोटो के सेव होगा। Edit करते समय खाली छोड़ने पर पुरानी फोटो रहेगी।</div>
+<div class="muted">If no new photo is selected while editing, the existing photo will be kept.</div>
 
-<label>Combo में शामिल खाने चुनें</label>
-<div id="comboFoodChoices" class="panel empty">Menu लोड हो रहा है...</div>
+<label>Choose Food Items in Combo</label>
+<div id="comboFoodChoices" class="panel empty">Loading menu...</div>
 
-<div id="comboSummary" class="combo-summary">अभी कोई खाना नहीं चुना गया है।</div>
+<div id="comboSummary" class="combo-summary">No food items selected yet.</div>
 
-<button id="comboSaveBtn" class="full" type="submit">Combo Save करें</button>
-<button id="comboCancelBtn" class="full dark" type="button" style="display:none">Combo Edit Cancel करें</button>
+<button id="comboSaveBtn" class="full" type="submit">Save Combo</button>
+<button id="comboCancelBtn" class="full dark" type="button" style="display:none">Cancel Combo Edit</button>
 </form>
 <div id="comboMessage" class="success"></div>
 <div id="comboError" class="error"></div>
 </div>
 
-<h2 style="margin-top:20px">आपका Menu</h2>
+<h2 style="margin-top:20px">Your Menu</h2>
 <div id="menuList"></div>
 
-<h2 style="margin-top:20px">आपके Combos</h2>
+<h2 style="margin-top:20px">Your Combos</h2>
 <div id="comboList"></div>
 </section>
 
@@ -218,9 +233,9 @@ button:disabled{opacity:.55;cursor:wait}
 <div class="panel">
 <h2>Category Management</h2>
 <form id="categoryForm">
-<label for="categoryName">नई Category का नाम</label>
+<label for="categoryName">New Category Name</label>
 <input id="categoryName" placeholder="Biryani" required>
-<button class="full" type="submit">Category जोड़ें</button>
+<button class="full" type="submit">Add Category</button>
 </form>
 <div id="categoryMessage" class="success"></div>
 <div id="categoryError" class="error"></div>
@@ -230,24 +245,24 @@ button:disabled{opacity:.55;cursor:wait}
 
 <section id="offersTab" class="tabpage">
 <div class="panel">
-<h2>Discount Offer बनाएं / बदलें</h2>
-<div class="muted">एक या कई खाने चुनें। तय समय पर छूट अपने आप लागू होगी।</div>
+<h2>Create / Edit Discount Offer</h2>
+<div class="muted">Select one or more food items. The discount will apply automatically during the scheduled time.</div>
 <form id="offerForm">
-<label>खाने चुनें</label>
-<div id="offerItems" class="panel empty">Menu लोड हो रहा है...</div>
-<label for="discountPercent">Discount प्रतिशत (%)</label>
+<label>Select Food Items</label>
+<div id="offerItems" class="panel empty">Loading menu...</div>
+<label for="discountPercent">Discount Percentage (%)</label>
 <input id="discountPercent" type="number" min="1" max="99" required>
-<label for="offerStartAt">Offer शुरू होने का समय</label>
+<label for="offerStartAt">Offer Start Time</label>
 <input id="offerStartAt" type="datetime-local" required>
-<label for="offerEndAt">Offer खत्म होने का समय (वैकल्पिक)</label>
+<label for="offerEndAt">Offer End Time (Optional)</label>
 <input id="offerEndAt" type="datetime-local">
-<button id="offerSaveBtn" class="full" type="submit">Offer लागू करें</button>
+<button id="offerSaveBtn" class="full" type="submit">Apply Offer</button>
 </form>
-<div class="muted" style="margin-top:10px">खत्म होने का समय खाली रखने पर Offer मैन्युअल हटाने तक रहेगा।</div>
+<div class="muted" style="margin-top:10px">If the end time is empty, the offer will remain active until manually removed.</div>
 <div id="offerMessage" class="success"></div>
 <div id="offerError" class="error"></div>
 </div>
-<h2 style="margin-top:20px">मौजूदा Offers</h2>
+<h2 style="margin-top:20px">Current Offers</h2>
 <div id="activeOffers"></div>
 </section>
 
@@ -257,11 +272,11 @@ button:disabled{opacity:.55;cursor:wait}
 <form id="settingsForm">
 <label for="deliveryCharge">Delivery Charge (₹)</label>
 <input id="deliveryCharge" type="number" min="0" step="1" required>
-<label><input id="codEnabled" type="checkbox" style="width:auto;margin-right:8px">Cash on Delivery चालू रखें</label>
-<label><input id="onlineEnabled" type="checkbox" style="width:auto;margin-right:8px">Online Payment चालू रखें</label>
+<label><input id="codEnabled" type="checkbox" style="width:auto;margin-right:8px">Enable Cash on Delivery</label>
+<label><input id="onlineEnabled" type="checkbox" style="width:auto;margin-right:8px">Enable Online Payment</label>
 <label for="upiId">UPI ID</label>
 <input id="upiId" placeholder="example@upi">
-<button id="settingsSaveBtn" class="full" type="submit">Settings Save करें</button>
+<button id="settingsSaveBtn" class="full" type="submit">Save Settings</button>
 </form>
 <div id="settingsMessage" class="success"></div>
 <div id="settingsError" class="error"></div>
@@ -298,6 +313,7 @@ let stopOrders=null,stopMenu=null,stopCategories=null;
 let menuRows=[],categoryRows=[];
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const foodTypeName=t=>t==="nonveg"?"NON-VEG":"VEG";
 
 function show(id,msg,kind="error"){
 const e=$(id);e.textContent=msg;e.className=kind;e.style.display="block";
@@ -372,7 +388,7 @@ const root=$("ordersList");
 root.replaceChildren();
 
 if(!a.length){
-root.innerHTML='<div class="panel empty">अभी कोई ऑर्डर नहीं है।</div>';
+root.innerHTML='<div class="panel empty">There are no orders yet.</div>';
 return;
 }
 
@@ -405,10 +421,10 @@ it.textContent=Array.isArray(o.items)?o.items.map(i=>{
 if(typeof i==="string")return i;
 let line=(i.name||i.title||"Item")+" × "+(i.qty||i.quantity||1);
 if(Array.isArray(i.comboItems)){
-line+="\n"+i.comboItems.map(x=>"  • "+x.name+" × "+x.quantity+(x.freeQuantity?" (मुफ्त "+x.freeQuantity+")":"")).join("\n");
+line+="\n"+i.comboItems.map(x=>"  • "+x.name+" × "+x.quantity+(x.freeQuantity?" (FREE "+x.freeQuantity+")":"")).join("\n");
 }
 return line;
-}).join("\n"):"Items जानकारी उपलब्ध नहीं";
+}).join("\n"):"Order item details unavailable";
 c.append(it);
 
 const total=document.createElement("p");
@@ -448,7 +464,7 @@ const delBtn=document.createElement("button");
 delBtn.textContent="Delete Order";
 delBtn.className="danger";
 delBtn.onclick=async()=>{
-if(!confirm("Order #"+(o.id||o.orderId||o.firebaseDocId)+" को हमेशा के लिए Delete करना है?"))return;
+if(!confirm("Permanently delete Order #"+(o.id||o.orderId||o.firebaseDocId)+"?"))return;
 delBtn.disabled=true;
 delBtn.textContent="Deleting...";
 try{
@@ -474,7 +490,7 @@ const foods=menuRows.filter(f=>f.type!=="combo");
 const combos=menuRows.filter(f=>f.type==="combo");
 
 const root=$("menuList");root.replaceChildren();
-if(!foods.length)root.innerHTML='<div class="panel empty">Menu खाली है।</div>';
+if(!foods.length)root.innerHTML='<div class="panel empty">Your menu is empty.</div>';
 
 for(const f of foods){
 const c=document.createElement("article");c.className="food";
@@ -482,13 +498,13 @@ const r=document.createElement("div");r.className="foodrow";
 const im=document.createElement("img");im.src=f.imageUrl||"";im.alt=f.name||"Food";
 im.onerror=()=>im.style.display="none";
 const info=document.createElement("div");info.className="foodinfo";
-info.innerHTML="<strong>"+esc(f.name)+"</strong><div class='muted'>"+esc(f.category)+" • ₹"+esc(f.price)+"</div><div class='muted'>समय: "+esc(f.availableFrom||"पूरे दिन")+" - "+esc(f.availableTo||"पूरे दिन")+"</div><span class='pill "+(f.available===false?"off":"")+"'>"+(f.available===false?"Out of Stock":"Available")+"</span>";
+info.innerHTML="<strong>"+esc(f.name)+"</strong><div class='muted'>"+esc(f.category)+" • ₹"+esc(f.price)+"</div><div class='type-pill "+(f.foodType==="nonveg"?"nonveg":"")+"'>"+foodTypeName(f.foodType||"veg")+"</div><div class='muted'>Time: "+esc(f.availableFrom||"All day")+" - "+esc(f.availableTo||"All day")+"</div><span class='pill "+(f.available===false?"off":"")+"'>"+(f.available===false?"Out of Stock":"Available")+"</span>";
 r.append(im,info);c.append(r);
 const a=document.createElement("div");a.className="foodactions";
 const edit=document.createElement("button");edit.textContent="Edit";edit.onclick=()=>editFood(f);
 const del=document.createElement("button");del.className="danger";del.textContent="Delete";
 del.onclick=async()=>{
-if(confirm(f.name+" delete करना है?")){
+if(confirm("Delete "+f.name+"?")){
 try{await deleteDoc(doc(db,"menu",f.id));}
 catch(e){show("menuError",err(e));}
 }
@@ -497,26 +513,26 @@ a.append(edit,del);c.append(a);root.append(c);
 }
 
 const comboRoot=$("comboList");comboRoot.replaceChildren();
-if(!combos.length)comboRoot.innerHTML='<div class="panel empty">अभी कोई Combo नहीं बनाया गया है।</div>';
+if(!combos.length)comboRoot.innerHTML='<div class="panel empty">No combos created yet.</div>';
 for(const f of combos){
 const c=document.createElement("article");c.className="food";
 const r=document.createElement("div");r.className="foodrow";
 const im=document.createElement("img");im.src=f.imageUrl||"";im.alt=f.name||"Combo";
 im.onerror=()=>im.style.display="none";
 const info=document.createElement("div");info.className="foodinfo";
-const details=Array.isArray(f.comboItems)?f.comboItems.map(x=>(x.name||"Item")+" × "+x.quantity+" (मुफ्त "+(x.freeQuantity||0)+")").join(", "):"";
-info.innerHTML="<strong>"+esc(f.name)+"</strong><div class='muted'>Combo कीमत: ₹"+esc(f.comboPrice??f.price)+"</div><div class='muted'>"+esc(details)+"</div><span class='pill "+(f.available===false?"off":"")+"'>"+(f.available===false?"Out of Stock":"Available")+"</span>";
+const details=Array.isArray(f.comboItems)?f.comboItems.map(x=>(x.name||"Item")+" × "+x.quantity+" (FREE "+(x.freeQuantity||0)+")").join(", "):"";
+info.innerHTML="<strong>"+esc(f.name)+"</strong><div class='muted'>Combo Price: ₹"+esc(f.comboPrice??f.price)+"</div><div class='type-pill "+(f.foodType==="nonveg"?"nonveg":"")+"'>"+foodTypeName(f.foodType||"veg")+"</div><div class='muted'>"+esc(details)+"</div><span class='pill "+(f.available===false?"off":"")+"'>"+(f.available===false?"Out of Stock":"Available")+"</span>";
 r.append(im,info);c.append(r);
 const a=document.createElement("div");a.className="foodactions";
 const edit=document.createElement("button");edit.textContent="Edit Combo";edit.onclick=()=>editCombo(f);
-const toggle=document.createElement("button");toggle.className="dark";toggle.textContent=f.available===false?"Available करें":"Out of Stock करें";
+const toggle=document.createElement("button");toggle.className="dark";toggle.textContent=f.available===false?"Set Available":"Set Out of Stock";
 toggle.onclick=async()=>{
 try{await updateDoc(doc(db,"menu",f.id),{available:f.available===false,updatedAt:serverTimestamp()});}
 catch(e){show("comboError",err(e));}
 };
 const del=document.createElement("button");del.className="danger";del.textContent="Delete Combo";
 del.onclick=async()=>{
-if(confirm(f.name+" Combo delete करना है?")){
+if(confirm("Delete Combo "+f.name+"?")){
 try{await deleteDoc(doc(db,"menu",f.id));}
 catch(e){show("comboError",err(e));}
 }
@@ -536,21 +552,24 @@ function editFood(f){
 $("foodId").value=f.id;
 $("foodName").value=f.name||"";
 $("foodCategory").value=f.category||"";
+$("foodType").value=f.foodType==="nonveg"?"nonveg":"veg";
 $("foodPrice").value=f.price??"";
 $("foodAvailable").value=String(f.available!==false);
 $("availableFrom").value=f.availableFrom||"";
 $("availableTo").value=f.availableTo||"";
 $("foodImage").value="";
-$("menuFormTitle").textContent="खाना Edit करें";
-$("foodSaveBtn").textContent="Changes Save करें";
+$("menuFormTitle").textContent="Edit Food";
+$("foodSaveBtn").textContent="Save Changes";
 $("foodCancelBtn").style.display="block";
 window.scrollTo({top:0,behavior:"smooth"});
 }
 
 function resetFood(){
-$("foodForm").reset();$("foodId").value="";
-$("menuFormTitle").textContent="नया खाना जोड़ें";
-$("foodSaveBtn").textContent="खाना Save करें";
+$("foodForm").reset();
+$("foodId").value="";
+$("foodType").value="veg";
+$("menuFormTitle").textContent="Add New Food";
+$("foodSaveBtn").textContent="Save Food";
 $("foodCancelBtn").style.display="none";
 }
 $("foodCancelBtn").onclick=resetFood;
@@ -572,15 +591,16 @@ b.disabled=true;b.textContent="Please wait...";
 try{
 let imageUrl="";
 if(file){
-if(!file.type.startsWith("image/"))throw Error("Image चुनें");
-if(file.size>5*1024*1024)throw Error("फोटो 5 MB से छोटी रखें");
+if(!file.type.startsWith("image/"))throw Error("Please select an image.");
+if(file.size>5*1024*1024)throw Error("Image must be smaller than 5 MB.");
 imageUrl=await uploadImage(file);
-}else if(!id)throw Error("नया खाना जोड़ने के लिए फोटो चुनें");
+}else if(!id)throw Error("Please select a photo for the new food item.");
 
 const data={
 type:"food",
 name:$("foodName").value.trim(),
 category:$("foodCategory").value.trim(),
+foodType:$("foodType").value==="nonveg"?"nonveg":"veg",
 price:Number($("foodPrice").value),
 available:$("foodAvailable").value==="true",
 availableFrom:$("availableFrom").value||"",
@@ -593,12 +613,12 @@ else{
 data.imageUrl=imageUrl;data.createdAt=serverTimestamp();
 await addDoc(collection(db,"menu"),data);
 }
-show("menuMessage",id?"खाना अपडेट हो गया।":"नया खाना जोड़ दिया गया।","success");
+show("menuMessage",id?"Food updated successfully.":"New food added successfully.","success");
 resetFood();
 }catch(x){show("menuError",x.message||err(x));}
 finally{
 b.disabled=false;
-if(!$("foodId").value)b.textContent="खाना Save करें";
+if(!$("foodId").value)b.textContent="Save Food";
 }
 });
 
@@ -607,7 +627,7 @@ function renderComboChoices(existing=[]){
 const root=$("comboFoodChoices");root.replaceChildren();
 const foods=menuRows.filter(f=>f.type!=="combo");
 if(!foods.length){
-root.textContent="पहले Menu में खाने जोड़ें।";
+root.textContent="Add food items to the menu first.";
 return;
 }
 foods.forEach(f=>{
@@ -615,16 +635,16 @@ const old=existing.find(x=>x.id===f.id);
 const box=document.createElement("div");box.className="combo-choice";
 const top=document.createElement("div");top.className="combo-choice-top";
 const cb=document.createElement("input");cb.type="checkbox";cb.className="combo-food-check";cb.value=f.id;cb.checked=!!old;
-const lab=document.createElement("label");lab.textContent=(f.name||"Food")+" — ₹"+(f.price??0);
+const lab=document.createElement("label");lab.textContent=(f.name||"Food")+" — ₹"+(f.price??0)+" ("+foodTypeName(f.foodType||"veg")+")";
 lab.htmlFor="combo-check-"+f.id;cb.id="combo-check-"+f.id;
 top.append(cb,lab);
 const qtyWrap=document.createElement("div");qtyWrap.className="combo-quantities";
 const q1=document.createElement("div");
-const l1=document.createElement("label");l1.textContent="कुल मात्रा";
+const l1=document.createElement("label");l1.textContent="Total Quantity";
 const qty=document.createElement("input");qty.type="number";qty.min="1";qty.step="1";qty.value=old?.quantity||1;qty.className="combo-qty";qty.disabled=!old;
 q1.append(l1,qty);
 const q2=document.createElement("div");
-const l2=document.createElement("label");l2.textContent="मुफ्त मात्रा";
+const l2=document.createElement("label");l2.textContent="Free Quantity";
 const free=document.createElement("input");free.type="number";free.min="0";free.step="1";free.value=old?.freeQuantity||0;free.className="combo-free";free.disabled=!old;
 q2.append(l2,free);
 qtyWrap.append(q1,q2);
@@ -665,34 +685,36 @@ return selected;
 function updateComboSummary(){
 const selected=getComboSelections();
 if(!selected.length){
-$("comboSummary").textContent="अभी कोई खाना नहीं चुना गया है।";
+$("comboSummary").textContent="No food items selected yet.";
 return;
 }
 let total=0;
 const lines=selected.map(x=>{
 total+=x.quantity*x.itemPrice;
-return x.name+" × "+x.quantity+" | मुफ्त: "+x.freeQuantity+" | कीमत के हिसाब से: ₹"+(x.quantity*x.itemPrice);
+return x.name+" × "+x.quantity+" | Free: "+x.freeQuantity+" | Item value: ₹"+(x.quantity*x.itemPrice);
 });
-$("comboSummary").textContent="चुने गए खाने:\n"+lines.join("\n")+"\nसभी खाने की अलग-अलग कुल कीमत: ₹"+total+"\nCombo की कीमत आप ऊपर खुद तय करेंगे।";
+$("comboSummary").textContent="Selected Items:\n"+lines.join("\n")+"\nTotal individual item value: ₹"+total+"\nSet your own combo price above.";
 }
 
 function resetCombo(){
 $("comboForm").reset();
 $("comboId").value="";
 $("comboImage").value="";
-$("comboFormTitle").textContent="नया Combo बनाएं";
-$("comboSaveBtn").textContent="Combo Save करें";
+$("comboFoodType").value="veg";
+$("comboFormTitle").textContent="Create New Combo";
+$("comboSaveBtn").textContent="Save Combo";
 $("comboCancelBtn").style.display="none";
 renderComboChoices();
 }
 function editCombo(f){
 $("comboId").value=f.id;
 $("comboName").value=f.name||"";
+$("comboFoodType").value=f.foodType==="nonveg"?"nonveg":"veg";
 $("comboPrice").value=f.comboPrice??f.price??"";
 $("comboAvailable").value=String(f.available!==false);
 $("comboImage").value="";
-$("comboFormTitle").textContent="Combo Edit करें";
-$("comboSaveBtn").textContent="Changes Save करें";
+$("comboFormTitle").textContent="Edit Combo";
+$("comboSaveBtn").textContent="Save Changes";
 $("comboCancelBtn").style.display="block";
 renderComboChoices(Array.isArray(f.comboItems)?f.comboItems:[]);
 window.scrollTo({top:0,behavior:"smooth"});
@@ -715,16 +737,16 @@ const name=$("comboName").value.trim();
 const price=Number($("comboPrice").value);
 const selected=getComboSelections();
 
-if(!name){show("comboError","Combo का नाम डालें।");return;}
-if(!Number.isFinite(price)||price<0){show("comboError","Combo की सही कीमत डालें।");return;}
-if(!selected.length){show("comboError","Combo में कम से कम एक खाना चुनें।");return;}
+if(!name){show("comboError","Enter a combo name.");return;}
+if(!Number.isFinite(price)||price<0){show("comboError","Enter a valid combo price.");return;}
+if(!selected.length){show("comboError","Select at least one food item for the combo.");return;}
 
 for(const item of selected){
 if(!Number.isInteger(item.quantity)||item.quantity<1){
-show("comboError",item.name+" की कुल मात्रा कम से कम 1 होनी चाहिए।");return;
+show("comboError",item.name+" total quantity must be at least 1.");return;
 }
 if(!Number.isInteger(item.freeQuantity)||item.freeQuantity<0||item.freeQuantity>item.quantity){
-show("comboError",item.name+" की मुफ्त मात्रा कुल मात्रा से ज्यादा नहीं हो सकती।");return;
+show("comboError",item.name+" free quantity cannot be greater than total quantity.");return;
 }
 }
 
@@ -732,14 +754,15 @@ b.disabled=true;b.textContent="Please wait...";
 try{
 let imageUrl="";
 if(file){
-if(!file.type.startsWith("image/"))throw Error("सही फोटो चुनें।");
-if(file.size>5*1024*1024)throw Error("फोटो 5 MB से छोटी रखें।");
+if(!file.type.startsWith("image/"))throw Error("Please select a valid image.");
+if(file.size>5*1024*1024)throw Error("Image must be smaller than 5 MB.");
 imageUrl=await uploadImage(file);
 }
 const data={
 type:"combo",
 name,
 category:"Combo",
+foodType:$("comboFoodType").value==="nonveg"?"nonveg":"veg",
 price,
 comboPrice:price,
 comboItems:selected,
@@ -761,13 +784,13 @@ if(!imageUrl)data.imageUrl="";
 await addDoc(collection(db,"menu"),data);
 }
 await ensureComboCategory();
-show("comboMessage",id?"Combo अपडेट हो गया।":"नया Combo बन गया।","success");
+show("comboMessage",id?"Combo updated successfully.":"New combo created successfully.","success");
 resetCombo();
 }catch(x){
 show("comboError",x.message||err(x));
 }finally{
 b.disabled=false;
-if(!$("comboId").value)b.textContent="Combo Save करें";
+if(!$("comboId").value)b.textContent="Save Combo";
 }
 });
 
@@ -783,7 +806,7 @@ const box=document.createElement("div");box.className="food";
 const name=document.createElement("strong");name.textContent=c.name||"Unnamed";
 const edit=document.createElement("button");edit.textContent="Rename";edit.style.marginLeft="10px";
 edit.onclick=async()=>{
-const n=prompt("नई Category का नाम",c.name||"");
+const n=prompt("Enter the new category name",c.name||"");
 if(!n||!n.trim()||n.trim()===c.name)return;
 try{
 const batch=writeBatch(db);
@@ -794,8 +817,8 @@ await batch.commit();
 };
 const del=document.createElement("button");del.className="danger";del.textContent="Delete";del.style.marginLeft="7px";
 del.onclick=async()=>{
-if(menuRows.some(m=>m.category===c.name)){show("categoryError","पहले इस Category के सभी खाने दूसरी Category में बदलें।");return;}
-if(confirm("Category delete करें?")){
+if(menuRows.some(m=>m.category===c.name)){show("categoryError","Move all food items to another category before deleting this category.");return;}
+if(confirm("Delete this category?")){
 try{await deleteDoc(doc(db,"categories",c.id));}
 catch(e){show("categoryError",err(e));}
 }
@@ -811,11 +834,11 @@ $("categoryForm").addEventListener("submit",async e=>{
 e.preventDefault();hide("categoryError");hide("categoryMessage");
 const n=$("categoryName").value.trim();
 if(categoryRows.some(c=>(c.name||"").toLowerCase()===n.toLowerCase())){
-show("categoryError","यह Category पहले से मौजूद है।");return;
+show("categoryError","This category already exists.");return;
 }
 try{
 await addDoc(collection(db,"categories"),{name:n,createdAt:serverTimestamp()});
-$("categoryForm").reset();show("categoryMessage","Category जोड़ दी गई।","success");
+$("categoryForm").reset();show("categoryMessage","Category added successfully.","success");
 }catch(x){show("categoryError",err(x));}
 });
 
@@ -823,13 +846,13 @@ $("categoryForm").reset();show("categoryMessage","Category जोड़ दी �
 function renderOfferChoices(){
 const root=$("offerItems");root.replaceChildren();
 const foods=menuRows.filter(f=>f.type!=="combo");
-if(!foods.length){root.textContent="पहले Menu में खाना जोड़ें।";return;}
+if(!foods.length){root.textContent="Add food items to the menu first.";return;}
 for(const f of foods){
 const lab=document.createElement("label");
 lab.style.display="flex";lab.style.alignItems="center";lab.style.gap="9px";lab.style.margin="8px 0";
 const cb=document.createElement("input");cb.type="checkbox";cb.value=f.id;cb.style.width="auto";cb.style.margin="0";
 const text=document.createElement("span");
-text.textContent=(f.name||"Food")+" — ₹"+(f.price??0)+(Number(f.discountPercent)>0?" (मौजूदा छूट "+f.discountPercent+"%)":"");
+text.textContent=(f.name||"Food")+" — ₹"+(f.price??0)+(Number(f.discountPercent)>0?" (Current discount "+f.discountPercent+"%)":"");
 lab.append(cb,text);root.append(lab);
 }
 }
@@ -837,15 +860,15 @@ lab.append(cb,text);root.append(lab);
 function renderOffers(){
 const root=$("activeOffers");root.replaceChildren();
 const offered=menuRows.filter(f=>f.type!=="combo"&&Number(f.discountPercent)>0);
-if(!offered.length){root.innerHTML='<div class="panel empty">कोई Offer लागू नहीं है।</div>';return;}
+if(!offered.length){root.innerHTML='<div class="panel empty">No active offers.</div>';return;}
 for(const f of offered){
 const c=document.createElement("div");c.className="food";
 const p=document.createElement("strong");p.textContent=f.name+" — "+f.discountPercent+"% OFF";
 const d=document.createElement("div");d.className="muted";
-d.textContent="शुरू: "+(dateText(f.offerStartAt)||"तुरंत")+" | खत्म: "+(dateText(f.offerEndAt)||"मैन्युअल हटाने तक");
-const b=document.createElement("button");b.className="danger";b.textContent="Offer हटाएँ";
+d.textContent="Starts: "+(dateText(f.offerStartAt)||"Immediately")+" | Ends: "+(dateText(f.offerEndAt)||"Until manually removed");
+const b=document.createElement("button");b.className="danger";b.textContent="Remove Offer";
 b.onclick=async()=>{
-if(!confirm(f.name+" का Offer हटाएँ?"))return;
+if(!confirm("Remove the offer for "+f.name+"?"))return;
 try{
 await updateDoc(doc(db,"menu",f.id),{
 discountPercent:0,offerStartAt:null,offerEndAt:null,updatedAt:serverTimestamp()
@@ -862,9 +885,9 @@ const ids=[...$("offerItems").querySelectorAll("input:checked")].map(x=>x.value)
 const pct=Number($("discountPercent").value);
 const start=new Date($("offerStartAt").value);
 const end=$("offerEndAt").value?new Date($("offerEndAt").value):null;
-if(!ids.length){show("offerError","कम से कम एक खाना चुनें।");return;}
-if(!(pct>0&&pct<100)){show("offerError","Discount 1 से 99 के बीच रखें।");return;}
-if(isNaN(start.getTime())||(end&&!(end>start))){show("offerError","Offer की तारीख/समय सही डालें।");return;}
+if(!ids.length){show("offerError","Select at least one food item.");return;}
+if(!(pct>0&&pct<100)){show("offerError","Discount must be between 1 and 99.");return;}
+if(isNaN(start.getTime())||(end&&!(end>start))){show("offerError","Enter a valid offer date and time.");return;}
 const b=$("offerSaveBtn");b.disabled=true;
 try{
 const batch=writeBatch(db);
@@ -877,7 +900,7 @@ updatedAt:serverTimestamp()
 });
 });
 await batch.commit();
-show("offerMessage",ids.length+" खाने पर "+pct+"% Offer सेव हो गया।","success");
+show("offerMessage",pct+"% offer saved for "+ids.length+" food item(s).","success");
 $("offerForm").reset();
 }catch(x){show("offerError",err(x));}
 finally{b.disabled=false;}
@@ -901,8 +924,8 @@ e.preventDefault();hide("settingsError");hide("settingsMessage");
 const b=$("settingsSaveBtn");b.disabled=true;
 try{
 const charge=Number($("deliveryCharge").value);
-if(!Number.isFinite(charge)||charge<0)throw Error("Delivery Charge सही डालें।");
-if($("onlineEnabled").checked&&!$("upiId").value.trim())throw Error("Online Payment चालू करने के लिए UPI ID डालें।");
+if(!Number.isFinite(charge)||charge<0)throw Error("Enter a valid delivery charge.");
+if($("onlineEnabled").checked&&!$("upiId").value.trim())throw Error("Enter your UPI ID to enable online payment.");
 await setDoc(doc(db,"settings","app"),{
 deliveryCharge:charge,
 codEnabled:$("codEnabled").checked,
@@ -910,7 +933,7 @@ onlineEnabled:$("onlineEnabled").checked,
 upiId:$("upiId").value.trim(),
 updatedAt:serverTimestamp()
 },{merge:true});
-show("settingsMessage","Settings सेव हो गईं।","success");
+show("settingsMessage","Settings saved successfully.","success");
 }catch(x){show("settingsError",x.message||err(x));}
 finally{b.disabled=false;}
 });
@@ -920,7 +943,7 @@ $("refreshBtn").onclick=startOrders;
 onAuthStateChanged(auth,user=>{
 if(!user){stopAll();loginView();return;}
 if(user.uid!==ADMIN_UID){
-stopAll();loginView();show("loginError","यह Email Admin UID से मेल नहीं खाता।");
+stopAll();loginView();show("loginError","This email does not match the Admin account.");
 signOut(auth).catch(()=>{});
 return;
 }
