@@ -1,4 +1,3 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
 import {
   getFirestore, collection, onSnapshot, doc, addDoc,
@@ -44,6 +43,23 @@ function distanceKm(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
+/* LOCATION PERMISSION */
+function requestLocationOnFirstLaunch() {
+  if (!navigator.geolocation) return;
+
+  // ऐप खुलते ही मोबाइल/ब्राउज़र Location Permission माँगेगा।
+  // अनुमति न मिलने पर ऐप बंद नहीं होगा।
+  navigator.geolocation.getCurrentPosition(
+    () => {},
+    () => {},
+    {
+      enableHighAccuracy: true,
+      timeout: 15000,
+      maximumAge: 0
+    }
+  );
+}
+
 function getCustomerLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -59,10 +75,7 @@ function getCustomerLocation() {
       }),
       error => {
         if (error.code === 1) {
-          reject(new Error(
-            "BITE EXPRESS को Location की अनुमति नहीं मिली है।\n\n" +
-            "मोबाइल Settings → Apps → Chrome → Permissions → Location में जाकर अनुमति दें।"
-          ));
+          reject(new Error("कृपया Location Permission Allow करें।"));
         } else if (error.code === 2) {
           reject(new Error("मोबाइल की Location चालू करें और दोबारा कोशिश करें।"));
         } else if (error.code === 3) {
@@ -93,11 +106,13 @@ async function checkDeliveryArea() {
 
     if (distance > DELIVERY_RADIUS_KM) {
       customerLocation = null;
+
       alert(
         "माफ़ कीजिए! BITE EXPRESS अभी आपके इलाके में उपलब्ध नहीं है।\n\n" +
         "आपकी दूरी: " + distance.toFixed(2) + " KM\n" +
         "डिलीवरी सीमा: 3.8 KM"
       );
+
       return false;
     }
 
@@ -109,6 +124,7 @@ async function checkDeliveryArea() {
     };
 
     return true;
+
   } catch (error) {
     alert(error.message);
     return false;
@@ -140,6 +156,7 @@ const authReady = new Promise((resolve, reject) => {
 
     try {
       const result = await signInAnonymously(auth);
+
       if (!finished) {
         finished = true;
         customerUid = result.user.uid;
@@ -176,7 +193,7 @@ const fallbackFoods = [
   {id:"legacy-chowmein",name:"Veg Chowmein",category:"Chowmein",price:99,imageUrl:"https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80",available:true},
   {id:"legacy-momos",name:"Momos",category:"Momos",price:79,imageUrl:"https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?auto=format&fit=crop&w=800&q=80",available:true},
   {id:"legacy-fries",name:"French Fries",category:"Burger",price:59,imageUrl:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80",available:true},
-  {id:"legacy-drink",name:"Cold Drink",category:"Drinks",price:49,imageUrl:"https://images.unsplash.com/photo-1629203851122-3726ecdf080e?auto=format&fit=crop&w=800&q=80",available:true}
+  {id:"legacy-drink",name:"Cold Drink",category:"Drinks",price:49,imageUrl:"https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800&q=80",available:true}
 ];
 
 /* TIME AND FOOD AVAILABILITY */
@@ -232,7 +249,14 @@ function availability(f) {
 }
 
 function effectivePrice(f) {
-  let p = Number(f.price) || 0;
+  let p = Number(
+    f.type === "combo" ? (f.comboPrice ?? f.price) : f.price
+  ) || 0;
+
+  // Combo की कीमत अलग रखी गई है।
+  // सामान्य खाने पर पुराने Offer सिस्टम की तरह छूट लागू होगी।
+  if (f.type === "combo") return p;
+
   const now = Date.now();
 
   const start = f.offerStartAt?.toDate
@@ -250,6 +274,27 @@ function effectivePrice(f) {
   }
 
   return p;
+}
+
+/* COMBO DETAILS */
+function comboDescription(f) {
+  if (f.type !== "combo" || !Array.isArray(f.comboItems)) return "";
+
+  return f.comboItems.map(item => {
+    const qty = Number(item.quantity) || 1;
+    const free = Number(item.freeQuantity) || 0;
+    const paid = Math.max(0, qty - free);
+
+    let text = `${item.name} × ${qty}`;
+
+    if (free > 0 && paid > 0) {
+      text += ` (${free} फ्री, ${paid} पेड)`;
+    } else if (free > 0) {
+      text += " (फ्री)";
+    }
+
+    return text;
+  }).join(" • ");
 }
 
 /* CATEGORY PHOTOS */
@@ -318,6 +363,7 @@ function renderFoods() {
   for (const f of list) {
     const state = availability(f);
     const price = effectivePrice(f);
+
     const card = document.createElement("article");
     card.className = "card";
 
@@ -336,6 +382,18 @@ function renderFoods() {
     p.className = "price";
     p.textContent = `₹${price}`;
 
+    body.append(h, p);
+
+    // Combo में शामिल खाने की जानकारी
+    if (f.type === "combo") {
+      const details = document.createElement("div");
+      details.className = "combo-details";
+      details.textContent = comboDescription(f);
+      details.style.fontSize = "13px";
+      details.style.margin = "6px 0";
+      body.append(details);
+    }
+
     const time = document.createElement("span");
     time.className = "food-time";
     time.textContent = timeLabel(f);
@@ -344,9 +402,9 @@ function renderFoods() {
     status.className = `food-state ${state.ok ? "open" : "closed"}`;
     status.textContent = state.label;
 
-    body.append(h, p, time, status);
+    body.append(time, status);
 
-    if (price < (Number(f.price) || 0)) {
+    if (f.type !== "combo" && price < (Number(f.price) || 0)) {
       const off = document.createElement("div");
       off.className = "discount-line";
       off.textContent = `Offer price (पहले ₹${f.price})`;
@@ -390,6 +448,8 @@ function addToCart(id) {
       id: f.id,
       name: f.name,
       category: f.category,
+      type: f.type || "food",
+      comboItems: f.type === "combo" ? (f.comboItems || []) : [],
       price: effectivePrice(f),
       qty: 1,
       imageUrl: f.imageUrl || f.image || ""
@@ -429,6 +489,16 @@ function totals() {
   };
 }
 
+function escapeHtml(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+}
+
 function renderCart() {
   const box = $("cartItems");
   if (!box) return;
@@ -442,6 +512,9 @@ function renderCart() {
         <div class="grow">
           <strong>${escapeHtml(x.name)}</strong>
           <div>₹${x.price}</div>
+          ${x.type === "combo"
+            ? `<small>${escapeHtml(comboDescription({type:"combo",comboItems:x.comboItems || []}))}</small>`
+            : ""}
         </div>
         <div class="qty">
           <button type="button" onclick="changeQty('${String(x.id).replace(/'/g, "\\'")}',-1)">−</button>
@@ -458,16 +531,6 @@ function renderCart() {
   if ($("itemTotal")) $("itemTotal").textContent = `₹${t.itemTotal}`;
   if ($("delivery")) $("delivery").textContent = `₹${t.delivery}`;
   if ($("grandTotal")) $("grandTotal").textContent = `₹${t.total}`;
-}
-
-function escapeHtml(s) {
-  return String(s ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[c]));
 }
 
 function changeQty(id, d) {
@@ -637,13 +700,17 @@ async function placeOrder(e) {
       name: $("name").value.trim(),
       phone: $("phone").value.trim(),
       address: $("address").value.trim(),
+
       items: cart.map(x => ({
         id: String(x.id),
         name: x.name,
         category: x.category || "",
+        type: x.type || "food",
+        comboItems: x.type === "combo" ? (x.comboItems || []) : [],
         price: Number(x.price),
         quantity: x.qty
       })),
+
       total: t.total,
       status: "New",
       createdAt: serverTimestamp(),
@@ -744,7 +811,19 @@ function renderMyOrders(snapshot) {
     const items = document.createElement("div");
     items.className = "my-order-items";
     items.textContent = (order.items || [])
-      .map(item => `${item.name} × ${item.quantity}`)
+      .map(item => {
+        let text = `${item.name} × ${item.quantity}`;
+
+        if (item.type === "combo" && Array.isArray(item.comboItems)) {
+          const details = item.comboItems
+            .map(part => `${part.name} × ${part.quantity}`)
+            .join(", ");
+
+          text += ` (${details})`;
+        }
+
+        return text;
+      })
       .join(", ");
 
     const amount = document.createElement("div");
@@ -863,5 +942,9 @@ renderCategories();
 renderFoods();
 updateCartCount();
 renderCart();
+
+// ऐप खुलते ही Location Permission माँगें,
+// लेकिन Deny होने पर ऐप को चलने दें।
+requestLocationOnFirstLaunch();
 
 tick = setInterval(renderFoods, 15000);
