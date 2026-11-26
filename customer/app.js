@@ -47,8 +47,6 @@ function distanceKm(lat1, lon1, lat2, lon2) {
 function requestLocationOnFirstLaunch() {
   if (!navigator.geolocation) return;
 
-  // ऐप खुलते ही मोबाइल/ब्राउज़र Location Permission माँगेगा।
-  // अनुमति न मिलने पर ऐप बंद नहीं होगा।
   navigator.geolocation.getCurrentPosition(
     () => {},
     () => {},
@@ -63,7 +61,7 @@ function requestLocationOnFirstLaunch() {
 function getCustomerLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error("आपके मोबाइल में Location सुविधा उपलब्ध नहीं है।"));
+      reject(new Error("Location is not available on this device."));
       return;
     }
 
@@ -75,13 +73,13 @@ function getCustomerLocation() {
       }),
       error => {
         if (error.code === 1) {
-          reject(new Error("कृपया Location Permission Allow करें।"));
+          reject(new Error("Please allow Location Permission."));
         } else if (error.code === 2) {
-          reject(new Error("मोबाइल की Location चालू करें और दोबारा कोशिश करें।"));
+          reject(new Error("Please turn on your device Location and try again."));
         } else if (error.code === 3) {
-          reject(new Error("Location मिलने में समय लगा। दोबारा कोशिश करें।"));
+          reject(new Error("Location request timed out. Please try again."));
         } else {
-          reject(new Error("Location नहीं मिल पाई। कृपया दोबारा कोशिश करें।"));
+          reject(new Error("Unable to get your Location. Please try again."));
         }
       },
       {
@@ -108,9 +106,9 @@ async function checkDeliveryArea() {
       customerLocation = null;
 
       alert(
-        "माफ़ कीजिए! BITE EXPRESS अभी आपके इलाके में उपलब्ध नहीं है।\n\n" +
-        "आपकी दूरी: " + distance.toFixed(2) + " KM\n" +
-        "डिलीवरी सीमा: 3.8 KM"
+        "Sorry! BITE EXPRESS is not available in your area yet.\n\n" +
+        "Your distance: " + distance.toFixed(2) + " KM\n" +
+        "Delivery radius: 3.8 KM"
       );
 
       return false;
@@ -184,17 +182,137 @@ let settings = {
 
 let cart = JSON.parse(localStorage.getItem("bite_cart") || "[]");
 let currentFilter = "all";
+let selectedFoodType = "veg";
 let selectedPayment = "COD";
 let tick = null;
 
 const fallbackFoods = [
-  {id:"legacy-burger",name:"Veg Burger",category:"Burger",price:99,imageUrl:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",available:true},
-  {id:"legacy-pizza",name:"Cheese Pizza",category:"Pizza",price:149,imageUrl:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",available:true},
-  {id:"legacy-chowmein",name:"Veg Chowmein",category:"Chowmein",price:99,imageUrl:"https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80",available:true},
-  {id:"legacy-momos",name:"Momos",category:"Momos",price:79,imageUrl:"https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?auto=format&fit=crop&w=800&q=80",available:true},
-  {id:"legacy-fries",name:"French Fries",category:"Burger",price:59,imageUrl:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=800&q=80",available:true},
-  {id:"legacy-drink",name:"Cold Drink",category:"Drinks",price:49,imageUrl:"https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800&q=80",available:true}
+  {
+    id:"legacy-burger",
+    name:"Veg Burger",
+    category:"Burger",
+    foodType:"veg",
+    price:99,
+    imageUrl:"https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
+    available:true
+  },
+  {
+    id:"legacy-pizza",
+    name:"Cheese Pizza",
+    category:"Pizza",
+    foodType:"veg",
+    price:149,
+    imageUrl:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=80",
+    available:true
+  },
+  {
+    id:"legacy-chowmein",
+    name:"Veg Chowmein",
+    category:"Chowmein",
+    foodType:"veg",
+    price:99,
+    imageUrl:"https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800&q=80",
+    available:true
+  },
+  {
+    id:"legacy-momos",
+    name:"Veg Momos",
+    category:"Momos",
+    foodType:"veg",
+    price:79,
+    imageUrl:"https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?w=800&q=80",
+    available:true
+  },
+  {
+    id:"legacy-fries",
+    name:"French Fries",
+    category:"Burger",
+    foodType:"veg",
+    price:59,
+    imageUrl:"https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800&q=80",
+    available:true
+  },
+  {
+    id:"legacy-drink",
+    name:"Cold Drink",
+    category:"Drinks",
+    foodType:"veg",
+    price:49,
+    imageUrl:"https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=800&q=80",
+    available:true
+  }
 ];
+
+/* FOOD TYPE */
+function foodTypeOf(food) {
+  return String(food.foodType || "veg").toLowerCase() === "nonveg"
+    ? "nonveg"
+    : "veg";
+}
+
+/* VEG / NON-VEG BUTTONS */
+function createFoodTypeTabs() {
+  const categoryRoot = $("categoryChips");
+  if (!categoryRoot || $("foodTypeTabs")) return;
+
+  const tabs = document.createElement("div");
+  tabs.id = "foodTypeTabs";
+
+  tabs.style.display = "flex";
+  tabs.style.gap = "12px";
+  tabs.style.margin = "12px 0";
+  tabs.style.width = "100%";
+
+  const veg = document.createElement("button");
+  veg.type = "button";
+  veg.textContent = "🥬 VEG";
+  veg.dataset.type = "veg";
+
+  const nonveg = document.createElement("button");
+  nonveg.type = "button";
+  nonveg.textContent = "🍗 NON-VEG";
+  nonveg.dataset.type = "nonveg";
+
+  [veg, nonveg].forEach(button => {
+    button.style.flex = "1";
+    button.style.padding = "13px 10px";
+    button.style.borderRadius = "12px";
+    button.style.border = "2px solid #ffd21a";
+    button.style.fontWeight = "800";
+    button.style.fontSize = "15px";
+    button.style.cursor = "pointer";
+    button.addEventListener("click", () => {
+      selectFoodType(button.dataset.type);
+    });
+  });
+
+  tabs.append(veg, nonveg);
+  categoryRoot.parentNode.insertBefore(tabs, categoryRoot);
+
+  updateFoodTypeTabs();
+}
+
+function updateFoodTypeTabs() {
+  const tabs = $("foodTypeTabs");
+  if (!tabs) return;
+
+  tabs.querySelectorAll("button").forEach(button => {
+    const active = button.dataset.type === selectedFoodType;
+
+    button.style.background = active ? "#ffd21a" : "#ffffff";
+    button.style.color = "#111111";
+    button.style.opacity = active ? "1" : "0.75";
+  });
+}
+
+function selectFoodType(type) {
+  selectedFoodType = type === "nonveg" ? "nonveg" : "veg";
+  currentFilter = "all";
+
+  updateFoodTypeTabs();
+  renderCategories();
+  renderFoods();
+}
 
 /* TIME AND FOOD AVAILABILITY */
 function localMinutes() {
@@ -232,20 +350,20 @@ function isWithinWindow(from, to) {
 
 function timeLabel(f) {
   return f.availableFrom && f.availableTo
-    ? `मिलेगा: ${formatTime12(f.availableFrom)} से ${formatTime12(f.availableTo)}`
-    : "समय तय नहीं";
+    ? `Available: ${formatTime12(f.availableFrom)} to ${formatTime12(f.availableTo)}`
+    : "Availability time not set";
 }
 
 function availability(f) {
   if (f.available === false) {
-    return {ok:false, label:"अभी उपलब्ध नहीं"};
+    return {ok:false, label:"Currently unavailable"};
   }
 
   if (!isWithinWindow(f.availableFrom, f.availableTo)) {
-    return {ok:false, label:"अभी उपलब्ध नहीं"};
+    return {ok:false, label:"Currently unavailable"};
   }
 
-  return {ok:true, label:"अभी उपलब्ध है"};
+  return {ok:true, label:"Available now"};
 }
 
 function effectivePrice(f) {
@@ -253,8 +371,6 @@ function effectivePrice(f) {
     f.type === "combo" ? (f.comboPrice ?? f.price) : f.price
   ) || 0;
 
-  // Combo की कीमत अलग रखी गई है।
-  // सामान्य खाने पर पुराने Offer सिस्टम की तरह छूट लागू होगी।
   if (f.type === "combo") return p;
 
   const now = Date.now();
@@ -288,9 +404,9 @@ function comboDescription(f) {
     let text = `${item.name} × ${qty}`;
 
     if (free > 0 && paid > 0) {
-      text += ` (${free} फ्री, ${paid} पेड)`;
+      text += ` (${free} FREE, ${paid} PAID)`;
     } else if (free > 0) {
-      text += " (फ्री)";
+      text += " (FREE)";
     }
 
     return text;
@@ -312,6 +428,10 @@ function renderCategories() {
     "Drinks":"https://images.unsplash.com/photo-1629203851122-3726ecdf080e?w=100&h=100&fit=crop"
   };
 
+  const visibleFoods = foods.filter(f =>
+    foodTypeOf(f) === selectedFoodType
+  );
+
   const all = document.createElement("button");
   all.textContent = "All";
   all.className = currentFilter === "all" ? "active" : "";
@@ -319,8 +439,10 @@ function renderCategories() {
   root.append(all);
 
   const names = [...new Set([
-    ...categories.map(c => c.name),
-    ...foods.map(f => f.category).filter(Boolean)
+    ...categories.map(c => c.name).filter(name =>
+      visibleFoods.some(f => f.category === name)
+    ),
+    ...visibleFoods.map(f => f.category).filter(Boolean)
   ])];
 
   for (const name of names) {
@@ -349,12 +471,13 @@ function renderFoods() {
   if (!root) return;
 
   const list = foods.filter(f =>
+    foodTypeOf(f) === selectedFoodType &&
     (currentFilter === "all" || f.category === currentFilter) &&
     (f.name || "").toLowerCase().includes(q)
   );
 
   if (!list.length) {
-    root.innerHTML = '<div class="empty">इस Category में अभी खाना उपलब्ध नहीं है।</div>';
+    root.innerHTML = '<div class="empty">No food available in this category yet.</div>';
     return;
   }
 
@@ -384,7 +507,6 @@ function renderFoods() {
 
     body.append(h, p);
 
-    // Combo में शामिल खाने की जानकारी
     if (f.type === "combo") {
       const details = document.createElement("div");
       details.className = "combo-details";
@@ -407,7 +529,7 @@ function renderFoods() {
     if (f.type !== "combo" && price < (Number(f.price) || 0)) {
       const off = document.createElement("div");
       off.className = "discount-line";
-      off.textContent = `Offer price (पहले ₹${f.price})`;
+      off.textContent = `Offer price (Regular ₹${f.price})`;
       body.append(off);
     }
 
@@ -448,6 +570,7 @@ function addToCart(id) {
       id: f.id,
       name: f.name,
       category: f.category,
+      foodType: foodTypeOf(f),
       type: f.type || "food",
       comboItems: f.type === "combo" ? (f.comboItems || []) : [],
       price: effectivePrice(f),
@@ -504,14 +627,14 @@ function renderCart() {
   if (!box) return;
 
   if (!cart.length) {
-    box.innerHTML = '<div class="empty">आपका Cart खाली है।</div>';
+    box.innerHTML = '<div class="empty">Your cart is empty.</div>';
   } else {
     box.innerHTML = cart.map(x => `
       <div class="cart-row">
-        <img src="${x.imageUrl || ""}" alt="">
+        <img src="${escapeHtml(x.imageUrl || "")}" alt="">
         <div class="grow">
           <strong>${escapeHtml(x.name)}</strong>
-          <div>₹${x.price}</div>
+          <div>₹${Number(x.price) || 0}</div>
           ${x.type === "combo"
             ? `<small>${escapeHtml(comboDescription({type:"combo",comboItems:x.comboItems || []}))}</small>`
             : ""}
@@ -521,7 +644,7 @@ function renderCart() {
           ${x.qty}
           <button type="button" onclick="changeQty('${String(x.id).replace(/'/g, "\\'")}',1)">+</button>
         </div>
-        <strong>₹${x.price * x.qty}</strong>
+        <strong>₹${Number(x.price) * x.qty}</strong>
       </div>
     `).join("");
   }
@@ -558,7 +681,7 @@ function closeCart() {
 /* CHECKOUT */
 async function showCheckout() {
   if (!cart.length) {
-    alert("पहले कोई सामान Cart में डालें।");
+    alert("Please add an item to your cart first.");
     return;
   }
 
@@ -595,13 +718,15 @@ function renderPaymentOptions() {
     options.push(["UPI", "📱 Online Payment (UPI)"]);
   }
 
+  const submitButton = $("orderForm")?.querySelector('button[type="submit"]');
+
   if (!options.length) {
-    root.textContent = "फिलहाल कोई Payment विकल्प चालू नहीं है। कृपया बाद में कोशिश करें।";
-    $("orderForm").querySelector('button[type="submit"]').disabled = true;
+    root.textContent = "No payment method is currently available. Please try again later.";
+    if (submitButton) submitButton.disabled = true;
     return;
   }
 
-  $("orderForm").querySelector('button[type="submit"]').disabled = false;
+  if (submitButton) submitButton.disabled = false;
 
   if (!options.some(x => x[0] === selectedPayment)) {
     selectedPayment = options[0][0];
@@ -619,14 +744,16 @@ function renderPaymentOptions() {
 
     radio.addEventListener("change", () => {
       selectedPayment = value;
-      $("upiArea").hidden = value !== "UPI";
+      if ($("upiArea")) $("upiArea").hidden = value !== "UPI";
     });
 
     wrap.append(radio, document.createTextNode(label));
     root.append(wrap);
   }
 
-  $("upiArea").hidden = selectedPayment !== "UPI";
+  if ($("upiArea")) {
+    $("upiArea").hidden = selectedPayment !== "UPI";
+  }
 }
 
 function makeUpiLink(amount, orderId) {
@@ -641,9 +768,9 @@ function makeUpiLink(amount, orderId) {
   return `upi://pay?${params.toString()}`;
 }
 
-$("upiPayBtn").addEventListener("click", () => {
+$("upiPayBtn")?.addEventListener("click", () => {
   if (!settings.upiId) {
-    alert("Admin ने UPI ID सेट नहीं की है।");
+    alert("The Admin has not set a UPI ID.");
     return;
   }
 
@@ -668,20 +795,20 @@ async function placeOrder(e) {
 
     if (selectedPayment === "UPI") {
       if (!settings.upiId) {
-        alert("Admin ने अभी UPI ID सेट नहीं की है।");
+        alert("The Admin has not set a UPI ID yet.");
         return;
       }
 
       const ref = $("upiReference").value.trim();
 
       if (!ref) {
-        alert("UPI Payment करने के बाद Transaction ID / UTR डालें।");
+        alert("After making the UPI payment, please enter the Transaction ID / UTR.");
         return;
       }
 
       if (!confirm(
-        "क्या आपने UPI से ₹" + t.total +
-        " भुगतान कर दिया है और सही UTR दर्ज किया है?"
+        "Have you paid ₹" + t.total +
+        " using UPI and entered the correct UTR?"
       )) return;
     }
 
@@ -689,7 +816,7 @@ async function placeOrder(e) {
       const current = findFood(c.id);
 
       if (current && !availability(current).ok) {
-        alert(`${current.name} अभी उपलब्ध नहीं है। Cart से हटाकर फिर ऑर्डर करें।`);
+        alert(`${current.name} is currently unavailable. Please remove it from your cart and try again.`);
         return;
       }
     }
@@ -705,6 +832,7 @@ async function placeOrder(e) {
         id: String(x.id),
         name: x.name,
         category: x.category || "",
+        foodType: x.foodType || "veg",
         type: x.type || "food",
         comboItems: x.type === "combo" ? (x.comboItems || []) : [],
         price: Number(x.price),
@@ -745,7 +873,7 @@ async function placeOrder(e) {
   } catch (err) {
     console.error(err);
     alert(
-      "ऑर्डर नहीं हो पाया। Internet/Firebase Rules जाँचें: " +
+      "Order failed. Please check your Internet connection or Firebase Rules: " +
       (err.code || err.message)
     );
   } finally {
@@ -756,15 +884,15 @@ async function placeOrder(e) {
 /* MY ORDERS */
 function statusText(status) {
   const labels = {
-    New: "नया ऑर्डर मिला",
-    Accepted: "ऑर्डर स्वीकार हो गया",
-    Preparing: "खाना तैयार हो रहा है",
-    "Out for Delivery": "डिलीवरी के लिए निकल गया",
-    Delivered: "ऑर्डर डिलीवर हो गया",
-    Cancelled: "ऑर्डर रद्द हो गया"
+    New: "New Order Received",
+    Accepted: "Order Accepted",
+    Preparing: "Food is Being Prepared",
+    "Out for Delivery": "Out for Delivery",
+    Delivered: "Order Delivered",
+    Cancelled: "Order Cancelled"
   };
 
-  return labels[status] || status || "Status उपलब्ध नहीं";
+  return labels[status] || status || "Status unavailable";
 }
 
 function renderMyOrders(snapshot) {
@@ -772,7 +900,7 @@ function renderMyOrders(snapshot) {
   if (!root) return;
 
   if (snapshot.empty) {
-    root.innerHTML = '<div class="empty">अभी आपका कोई ऑर्डर नहीं है।</div>';
+    root.innerHTML = '<div class="empty">You have no orders yet.</div>';
     return;
   }
 
@@ -828,7 +956,7 @@ function renderMyOrders(snapshot) {
 
     const amount = document.createElement("div");
     amount.className = "my-order-total";
-    amount.textContent = "कुल राशि: ₹" + (order.total || 0);
+    amount.textContent = "Total Amount: ₹" + (order.total || 0);
 
     const payment = document.createElement("div");
     payment.className = "my-order-payment";
@@ -842,7 +970,7 @@ function renderMyOrders(snapshot) {
 async function openMyOrders() {
   $("myOrdersPanel").classList.remove("hidden");
   $("myOrdersList").innerHTML =
-    '<div class="empty">आपके ऑर्डर लोड हो रहे हैं...</div>';
+    '<div class="empty">Loading your orders...</div>';
 
   try {
     await authReady;
@@ -862,14 +990,14 @@ async function openMyOrders() {
       error => {
         console.error(error);
         $("myOrdersList").innerHTML =
-          '<div class="empty">ऑर्डर लोड नहीं हुए। Internet या Firebase Rules जाँचें।</div>';
+          '<div class="empty">Unable to load orders. Please check your Internet connection or Firebase Rules.</div>';
       }
     );
 
   } catch (error) {
     console.error(error);
     $("myOrdersList").innerHTML =
-      '<div class="empty">ग्राहक की पहचान नहीं बन पाई। कृपया ऐप दोबारा खोलें।</div>';
+      '<div class="empty">Unable to verify customer account. Please reopen the app.</div>';
   }
 }
 
@@ -890,8 +1018,8 @@ window.openMyOrders = openMyOrders;
 window.closeMyOrders = closeMyOrders;
 
 /* EVENTS */
-$("search").addEventListener("input", renderFoods);
-$("orderForm").addEventListener("submit", placeOrder);
+$("search")?.addEventListener("input", renderFoods);
+$("orderForm")?.addEventListener("submit", placeOrder);
 
 /* FIRESTORE MENU */
 onSnapshot(collection(db, "menu"), snap => {
@@ -902,12 +1030,20 @@ onSnapshot(collection(db, "menu"), snap => {
 
   if (!foods.length) foods = fallbackFoods;
 
+  if (!foods.some(f => foodTypeOf(f) === selectedFoodType)) {
+    selectedFoodType = "veg";
+  }
+
+  createFoodTypeTabs();
+  updateFoodTypeTabs();
   renderCategories();
   renderFoods();
 
 }, err => {
   console.error(err);
   foods = fallbackFoods;
+  createFoodTypeTabs();
+  updateFoodTypeTabs();
   renderCategories();
   renderFoods();
 });
@@ -938,13 +1074,13 @@ onSnapshot(doc(db, "settings", "app"), snap => {
 });
 
 /* INITIAL DISPLAY */
+createFoodTypeTabs();
+updateFoodTypeTabs();
 renderCategories();
 renderFoods();
 updateCartCount();
 renderCart();
 
-// ऐप खुलते ही Location Permission माँगें,
-// लेकिन Deny होने पर ऐप को चलने दें।
 requestLocationOnFirstLaunch();
 
 tick = setInterval(renderFoods, 15000);
