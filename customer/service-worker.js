@@ -1,3 +1,6 @@
+
+importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+
 const CACHE_NAME = "bite-express-v2";
 
 const FILES_TO_CACHE = [
