@@ -7,9 +7,29 @@
   <meta name="theme-color" content="#111111">
   <meta name="description" content="BITE EXPRESS Shahpura 51 - Fast Food Ordering App">
   <title>Bite Express — Shahpura 51</title>
+
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/logo.png">
+
+  <!-- OneSignal Push Notifications -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "e127523f-284a-4405-8930-0689a0e1420f",
+        safari_web_id: "web.onesignal.auto.14c8c5b3-a149-48e9-849f-677a5e5d7747",
+        serviceWorkerPath: "/bite-express-admin/customer/OneSignalSDKWorker.js",
+        serviceWorkerParam: {
+          scope: "/bite-express-admin/customer/"
+        },
+        notifyButton: {
+          enable: true
+        }
+      });
+    });
+  </script>
 </head>
 <body>
   <header class="topbar">
